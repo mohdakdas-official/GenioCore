@@ -1,6 +1,8 @@
 import express from 'express'
 import cors from 'cors'
 import cookieParser from 'cookie-parser'
+import errorHandler from './middlewares/error.middleware.js'
+import ApiError from "./utils/ApiError.js";
 
 const app = express()
 
@@ -18,5 +20,10 @@ app.get('/', (req, res) => {
         success: true
     })
 })
+app.get('/error', (req, res) => {
+    throw new ApiError(400, "This is a test error")
+})
+
+app.use(errorHandler)
 
 export default app;
