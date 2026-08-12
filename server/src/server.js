@@ -1,9 +1,7 @@
-import dotenv from 'dotenv'
+import 'dotenv/config'
 import app from "./app.js";
 import connectDB from './config/db.js';
 import logger from './config/logger.js';
-
-dotenv.config()
 
 const PORT = process.env.PORT
 
@@ -14,7 +12,6 @@ const startServer = async () => {
             logger.info(`Server Running on PORT: ${PORT}`)
         })
     } catch (error) {
-        // console.log(`Failed to start server: ${error}`)
         logger.error(`Failed to start server: ${error}`)
         process.exit(1)
     }

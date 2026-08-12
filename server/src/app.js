@@ -1,8 +1,10 @@
-import express from 'express'
+import express, { Router } from 'express'
 import cors from 'cors'
 import cookieParser from 'cookie-parser'
 import errorHandler from './middlewares/error.middleware.js'
 import ApiError from "./utils/ApiError.js";
+import router from './routes/index.routes.js';
+import authMiddleware from "./middlewares/auth.middleware.js";
 
 const app = express()
 
@@ -20,9 +22,9 @@ app.get('/', (req, res) => {
         success: true
     })
 })
-app.get('/error', (req, res) => {
-    throw new ApiError(400, "This is a test error")
-})
+
+
+app.use("/api/v1", router);
 
 app.use(errorHandler)
 
