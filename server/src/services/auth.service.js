@@ -5,6 +5,7 @@ import BlacklistedToken from "../models/blacklisted-token.model.js";
 import PasswordResetToken from "../models/password-reset-token.model.js";
 import ApiError from '../utils/ApiError.js'
 import Session from "../models/session.model.js";
+import UserPreference from "../models/user-preference.model.js";
 import {
     hashToken,
     generateRandomToken,
@@ -491,12 +492,18 @@ export const logoutUser = async ({
 
 export const getCurrentUser = async (userId) => {
     const user = await User.findById(userId).select(
-        "-password -refreshToken"
+        "-password -refreshToken -__v"
     );
 
     if (!user) {
         throw new ApiError(404, "User not found");
     }
+
+    const preferences = await UserPreference.findOne({
+        userId: user._id,
+    }).select(
+        "-_id -userId -createdAt -updatedAt"
+    );
 
     return {
         id: user._id,
@@ -506,6 +513,17 @@ export const getCurrentUser = async (userId) => {
         avatar: user.avatar,
         isVerified: user.isVerified,
         isOnboarded: user.isOnboarded,
+
+        onboarding: preferences
+            ? {
+                purposes: preferences.purposes,
+                experienceLevel:
+                    preferences.experienceLevel,
+                referralSource:
+                    preferences.referralSource,
+            }
+            : null,
+
         createdAt: user.createdAt,
         updatedAt: user.updatedAt,
     };
