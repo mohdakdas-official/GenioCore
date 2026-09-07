@@ -1,15 +1,15 @@
+import ApiError from "../utils/ApiError.js";
+
 const validate = (schema) => (req, res, next) => {
-    const result = schema.safeParse(req.body);
+  const result = schema.safeParse(req.body);
 
-    if (!result.success) {
-        return next(
-            new ApiError(400, "Validation Failed", result.error.issues)
-        )
-    }
+  if (!result.success) {
+    throw new ApiError(400, "Validation failed", result.error.issues);
+  }
 
-    req.body = result.data;
+  req.body = result.data;
 
-    next()
-}
+  next();
+};
 
-export default validate
+export default validate;

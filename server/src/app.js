@@ -9,10 +9,16 @@ import loggerMiddleware from "./middlewares/logger.middleware.js";
 
 const app = express()
 
-app.use(cors({
-    origin: process.env.NODE_ENV === 'production' ? process.env.CLIENT_ORIGIN : 'http://localhost:5173',
-    withCredentials: true
-}))
+app.use(
+    cors({
+        origin:
+            process.env.NODE_ENV === "production"
+                ? process.env.CLIENT_ORIGIN
+                : "http://localhost:5173",
+
+        credentials: true,
+    })
+);
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 app.use(cookieParser())
