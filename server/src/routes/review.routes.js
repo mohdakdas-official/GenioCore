@@ -5,12 +5,14 @@ import {
   getReviewById,
   getReviewIssuesController,
   retryReviewController,
+  getProjectReviewsController,
 } from "../controllers/review.controller.js";
 
 import {
   createReviewSchema,
   reviewParamsSchema,
   reviewIssuesQuerySchema,
+  projectReviewsQuerySchema,
 } from "../validations/review.validation.js";
 
 import { projectIdParamsSchema } from "../validations/project.validation.js";
@@ -33,6 +35,14 @@ reviewRouter.post(
   validateParams(projectIdParamsSchema),
   validate(createReviewSchema),
   createReview,
+);
+
+reviewRouter.get(
+  "/",
+  authMiddleware,
+  validateParams(projectIdParamsSchema),
+  validateQuery(projectReviewsQuerySchema),
+  getProjectReviewsController,
 );
 
 reviewRouter.get(

@@ -69,3 +69,29 @@ export const reviewIssuesQuerySchema = z.strictObject({
     .regex(/^[0-9a-fA-F]{24}$/, "Invalid cursor")
     .optional(),
 });
+
+export const getReviewsQuerySchema = z.strictObject({
+  status: z
+    .enum(["QUEUED", "PROCESSING", "COMPLETED", "FAILED", "CANCELLED"])
+    .optional(),
+
+  limit: z.coerce.number().int().min(1).max(100).default(20),
+
+  cursor: z
+    .string()
+    .regex(/^[0-9a-fA-F]{24}$/, "Invalid cursor")
+    .optional(),
+});
+
+export const projectReviewsQuerySchema = z.strictObject({
+  status: z
+    .enum(["QUEUED", "PROCESSING", "COMPLETED", "FAILED", "CANCELLED"])
+    .optional(),
+
+  limit: z.coerce.number().int().min(1).max(100).default(20),
+
+  cursor: z
+    .string()
+    .regex(/^[0-9a-fA-F]{24}$/, "Invalid cursor")
+    .optional(),
+});

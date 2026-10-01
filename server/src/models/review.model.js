@@ -283,6 +283,17 @@ reviewSchema.index({
   _id: -1,
 });
 
+reviewSchema.index({
+  ownerId: 1,
+  _id: -1,
+});
+
+reviewSchema.index({
+  ownerId: 1,
+  status: 1,
+  _id: -1,
+});
+
 const Review = mongoose.model("Review", reviewSchema);
 
 export default Review;

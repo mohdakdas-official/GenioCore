@@ -246,3 +246,158 @@ export const retryReview = async ({ projectId, reviewId, ownerId }) => {
 
   return review;
 };
+
+export const getReviews = async ({ ownerId, status, limit = 20, cursor }) => {
+  if (!ownerId) {
+    throw new ApiError(401, "Authentication required");
+  }
+
+  const query = {
+    ownerId,
+  };
+
+  if (status) {
+    query.status = status;
+  }
+
+  if (cursor) {
+    query._id = {
+      $lt: cursor,
+    };
+  }
+
+  const reviews = await Review.find(query)
+    .sort({
+      _id: -1,
+    })
+    .limit(limit + 1)
+    .select(
+      [
+        "projectId",
+        "snapshotId",
+        "status",
+        "reviewType",
+        "routingMode",
+        "summary",
+        "scores",
+        "issueCounts",
+        "execution",
+        "failure",
+        "progress",
+        "queuedAt",
+        "startedAt",
+        "completedAt",
+        "failedAt",
+        "createdAt",
+        "updatedAt",
+      ].join(" "),
+    )
+    .populate({
+      path: "projectId",
+      select: "name description status sourceType",
+    })
+    .lean();
+
+  const hasNextPage = reviews.length > limit;
+
+  const items = hasNextPage ? reviews.slice(0, limit) : reviews;
+
+  const nextCursor =
+    hasNextPage && items.length > 0
+      ? items[items.length - 1]._id.toString()
+      : null;
+
+  return {
+    reviews: items,
+    pagination: {
+      limit,
+      hasNextPage,
+      nextCursor,
+    },
+  };
+};
+
+export const getProjectReviews = async ({
+  ownerId,
+  projectId,
+  status,
+  limit = 20,
+  cursor,
+}) => {
+  if (!ownerId) {
+    throw new ApiError(401, "Authentication required");
+  }
+
+  const project = await Project.findOne({
+    _id: projectId,
+    ownerId,
+  })
+    .select("_id")
+    .lean();
+
+  if (!project) {
+    throw new ApiError(404, "Project not found");
+  }
+
+  const query = {
+    ownerId,
+    projectId,
+  };
+
+  if (status) {
+    query.status = status;
+  }
+
+  if (cursor) {
+    query._id = {
+      $lt: cursor,
+    };
+  }
+
+  const reviews = await Review.find(query)
+    .sort({
+      _id: -1,
+    })
+    .limit(limit + 1)
+    .select(
+      [
+        "projectId",
+        "snapshotId",
+        "status",
+        "reviewType",
+        "routingMode",
+        "summary",
+        "scores",
+        "issueCounts",
+        "execution",
+        "failure",
+        "progress",
+        "queuedAt",
+        "startedAt",
+        "completedAt",
+        "failedAt",
+        "createdAt",
+        "updatedAt",
+      ].join(" "),
+    )
+    .lean();
+
+  const hasNextPage = reviews.length > limit;
+
+  const items = hasNextPage ? reviews.slice(0, limit) : reviews;
+
+  const nextCursor =
+    hasNextPage && items.length > 0
+      ? items[items.length - 1]._id.toString()
+      : null;
+
+  return {
+    reviews: items,
+
+    pagination: {
+      limit,
+      hasNextPage,
+      nextCursor,
+    },
+  };
+};

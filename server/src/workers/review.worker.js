@@ -6,6 +6,8 @@ import connectDB from "../config/db.js";
 
 import Review from "../models/review.model.js";
 
+import { createNotification } from "../services/notification.service.js";
+
 import { REVIEW_QUEUE_NAME } from "../constants/queue.constants.js";
 
 import { createWorkerRedisConnection } from "../config/redis.js";
@@ -607,6 +609,56 @@ const worker = new Worker(
       throw new Error(`Review ${reviewId} could not be completed`);
     }
 
+    await createNotification({
+      ownerId: completedReview.ownerId,
+
+      type: "REVIEW_COMPLETED",
+
+      title: "Code Review Completed",
+
+      message:
+        typeof completedReview.scores?.overall === "number"
+          ? `Review completed with an overall score of ${completedReview.scores.overall}/100.`
+          : "Code review completed successfully.",
+
+      severity: "NORMAL",
+
+      projectId: completedReview.projectId,
+
+      reviewId: completedReview._id,
+
+      dedupeKey: `${completedReview._id}:COMPLETED`,
+    });
+
+    const critical = completedReview.issueCounts?.critical ?? 0;
+
+    const high = completedReview.issueCounts?.high ?? 0;
+
+    if (critical > 0 || high > 0) {
+      await createNotification({
+        ownerId: completedReview.ownerId,
+
+        type: "SECURITY_ALERT",
+
+        title:
+          critical > 0
+            ? "Critical Security Findings Detected"
+            : "High Severity Findings Detected",
+
+        message: `Review detected ${critical} critical and ${high} high severity finding${
+          critical + high === 1 ? "" : "s"
+        }.`,
+
+        severity: critical > 0 ? "CRITICAL" : "HIGH",
+
+        projectId: completedReview.projectId,
+
+        reviewId: completedReview._id,
+
+        dedupeKey: `${completedReview._id}:SECURITY`,
+      });
+    }
+
     return {
       reviewId,
 
@@ -671,13 +723,10 @@ worker.on("failed", async (job, error) => {
   const isUnrecoverable =
     error instanceof UnrecoverableError || error?.name === "UnrecoverableError";
 
-  /*
-   * BullMQ will retry automatically
-   * while attempts remain.
-   *
-   * Don't mark Review FAILED yet.
+  /**
+   * BullMQ will retry while
+   * attempts remain.
    */
-
   if (!isUnrecoverable && job.attemptsMade < maxAttempts) {
     console.warn(
       `Review job ${job.id} attempt ${job.attemptsMade}/${maxAttempts} failed. Retrying...`,
@@ -686,47 +735,87 @@ worker.on("failed", async (job, error) => {
     return;
   }
 
-  /*
-   * ------------------------------------------------
-   * PERMANENT FAILURE
-   * ------------------------------------------------
+  /**
+   * Permanent failure
    */
+  try {
+    const failedReview = await Review.findOneAndUpdate(
+      {
+        _id: job.data.reviewId,
 
-  await Review.updateOne(
-    {
-      _id: job.data.reviewId,
+        ownerId: job.data.ownerId,
 
-      ownerId: job.data.ownerId,
-
-      status: {
-        $in: ["QUEUED", "PROCESSING"],
-      },
-    },
-
-    {
-      $set: {
-        status: "FAILED",
-
-        failedAt: new Date(),
-
-        failure: {
-          code: isUnrecoverable
-            ? "AI_QUOTA_EXHAUSTED"
-            : "REVIEW_PROCESSING_FAILED",
-
-          message: isUnrecoverable
-            ? "AI provider quota exhausted"
-            : "Review processing failed",
-
-          retryable: !isUnrecoverable,
+        status: {
+          $in: ["QUEUED", "PROCESSING"],
         },
       },
-    },
-  );
 
-  console.error(`Review job ${job.id} permanently failed:`, error.message);
+      {
+        $set: {
+          status: "FAILED",
+
+          failedAt: new Date(),
+
+          failure: {
+            code: isUnrecoverable
+              ? "AI_QUOTA_EXHAUSTED"
+              : "REVIEW_PROCESSING_FAILED",
+
+            message: isUnrecoverable
+              ? "AI provider quota exhausted"
+              : "Review processing failed",
+
+            retryable: !isUnrecoverable,
+          },
+        },
+      },
+
+      {
+        returnDocument: "after",
+
+        runValidators: true,
+      },
+    );
+
+    if (!failedReview) {
+      console.warn(
+        `Failed review ${job.data.reviewId} was not found or was already finalized.`,
+      );
+
+      return;
+    }
+
+    /**
+     * Real persisted notification
+     */
+    await createNotification({
+      ownerId: failedReview.ownerId,
+
+      type: "REVIEW_FAILED",
+
+      title: "Code Review Failed",
+
+      message:
+        failedReview.failure?.message ||
+        "The code review could not be completed.",
+
+      severity: "HIGH",
+
+      projectId: failedReview.projectId,
+
+      reviewId: failedReview._id,
+
+      dedupeKey: `${failedReview._id}:FAILED:${job.attemptsMade}`,
+    });
+
+    console.error(`Review job ${job.id} permanently failed:`, error.message);
+  } catch (notificationError) {
+    console.error(
+      `Failed to persist failure state/notification for review ${job.data.reviewId}:`,
+      notificationError,
+    );
+  }
 });
-
 /*
  * ------------------------------------------------
  * WORKER ERROR

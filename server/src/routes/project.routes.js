@@ -36,7 +36,7 @@ projectRouter.get(
   getProjects,
 );
 
-projectRouter.post(
+projectRouter.get(
   "/:projectId",
   authMiddleware,
   validateParams(projectIdParamsSchema),
