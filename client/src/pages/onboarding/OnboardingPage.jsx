@@ -6,7 +6,9 @@ import useOnboarding from "../../hooks/useOnboarding";
 
 import { completeOnboarding } from "../../services/onboarding.service";
 
-import { AVATAR_OPTIONS, TOTAL_STEPS } from "../../constants/onboarding";
+import { uploadUserAvatar } from "../../services/user.service";
+
+import { TOTAL_STEPS } from "../../constants/onboarding";
 
 import OnboardingProgress from "../../components/onboarding/OnboardingProgress";
 import OnboardingStepProfile from "../../components/onboarding/OnboardingStepProfile";
@@ -29,13 +31,13 @@ const OnboardingPage = () => {
 
   const [formData, setFormData] = useState({
     username: "",
-    avatar: null,
+    avatarFile: null,
     purposes: [],
     experienceLevel: null,
     referralSource: null,
   });
 
-  /**
+  /*
    * Update form state.
    */
   const updateFormData = (field, value) => {
@@ -48,13 +50,13 @@ const OnboardingPage = () => {
     }));
   };
 
-  /**
-   * Validate the currently visible step.
+  /*
+   * Validate current step.
    */
   const validateCurrentStep = () => {
-    // ----------------------------------
-    // Step 1 — Profile
-    // ----------------------------------
+    /*
+     * Step 1
+     */
     if (step === 1) {
       const username = formData.username.trim();
 
@@ -79,9 +81,9 @@ const OnboardingPage = () => {
       }
     }
 
-    // ----------------------------------
-    // Step 2 — Purpose
-    // ----------------------------------
+    /*
+     * Step 2
+     */
     if (step === 2) {
       const purposes = formData.purposes || [];
 
@@ -98,30 +100,22 @@ const OnboardingPage = () => {
       }
     }
 
-    // ----------------------------------
-    // Step 3 — Experience
-    // ----------------------------------
-    if (step === 3) {
-      if (!formData.experienceLevel) {
-        setInlineError("Please select your current experience level.");
+    /*
+     * Step 3
+     */
+    if (step === 3 && !formData.experienceLevel) {
+      setInlineError("Please select your current experience level.");
 
-        return false;
-      }
+      return false;
     }
 
-    // ----------------------------------
-    // Step 4 — Referral
-    // ----------------------------------
-    // Referral is optional.
-    // No validation required.
-    // ----------------------------------
+    /*
+     * Step 4 is optional.
+     */
 
     return true;
   };
 
-  /**
-   * Move to next step.
-   */
   const handleNext = () => {
     if (!validateCurrentStep()) {
       return;
@@ -132,9 +126,6 @@ const OnboardingPage = () => {
     setStep((previous) => Math.min(previous + 1, TOTAL_STEPS));
   };
 
-  /**
-   * Move to previous step.
-   */
   const handleBack = () => {
     if (loading) {
       return;
@@ -146,68 +137,28 @@ const OnboardingPage = () => {
     setStep((previous) => Math.max(previous - 1, 1));
   };
 
-  /**
-   * Convert selected local avatar
-   * into an absolute URL.
+  /*
+   * Onboarding JSON payload.
    *
-   * Example:
-   *
-   * /avatars/avatar-1.png
-   *
-   * becomes:
-   *
-   * http://localhost:5173/avatars/avatar-1.png
-   *
-   * or in production:
-   *
-   * https://neuaspire.vercel.app/avatars/avatar-1.png
-   */
-  const getAvatarUrl = () => {
-    if (!formData.avatar) {
-      return null;
-    }
-
-    const selectedAvatar = AVATAR_OPTIONS.find(
-      (avatar) => avatar.id === formData.avatar,
-    );
-
-    if (!selectedAvatar?.src) {
-      return null;
-    }
-
-    return new URL(selectedAvatar.src, window.location.origin).href;
-  };
-
-  /**
-   * Prepare backend payload.
+   * Avatar File must never be
+   * included here.
    */
   const formatPayload = () => {
-    const payload = {
+    return {
+      username: formData.username.trim().toLowerCase(),
+
       purposes: formData.purposes || [],
 
       experienceLevel: formData.experienceLevel,
 
       referralSource: formData.referralSource || null,
     };
-
-    const username = formData.username.trim();
-
-    if (username) {
-      payload.username = username;
-    }
-
-    const avatarUrl = getAvatarUrl();
-
-    if (avatarUrl) {
-      payload.avatar = avatarUrl;
-    }
-
-    return payload;
   };
 
-  /**
-   * Submit onboarding.
-   */
+  const getResponseData = (response) => {
+    return response?.data?.data ?? response?.data ?? response ?? null;
+  };
+
   const submitOnboarding = async () => {
     if (loading) {
       return;
@@ -218,16 +169,51 @@ const OnboardingPage = () => {
     setInlineError("");
 
     try {
+      /*
+       * --------------------------------
+       * 1. Complete onboarding
+       * --------------------------------
+       */
       const payload = formatPayload();
 
-      console.log("Onboarding Payload:", payload);
+      const onboardingResponse = await completeOnboarding(payload);
 
-      const response = await completeOnboarding(payload);
+      const onboardingUser = getResponseData(onboardingResponse);
 
-      if (response?.user && updateUser) {
-        updateUser(response.user);
+      if (onboardingUser && updateUser) {
+        updateUser(onboardingUser);
       }
 
+      /*
+       * --------------------------------
+       * 2. Upload optional avatar
+       * --------------------------------
+       */
+      if (formData.avatarFile) {
+        try {
+          const avatarResponse = await uploadUserAvatar(formData.avatarFile);
+
+          const updatedUser = getResponseData(avatarResponse);
+
+          if (updatedUser && updateUser) {
+            updateUser(updatedUser);
+          }
+        } catch (avatarError) {
+          console.error("Avatar upload failed:", avatarError);
+
+          /*
+           * Do not rollback
+           * onboarding because
+           * avatar is optional.
+           */
+        }
+      }
+
+      /*
+       * --------------------------------
+       * 3. Dashboard
+       * --------------------------------
+       */
       navigate("/v1/dashboard", {
         replace: true,
       });
@@ -235,7 +221,7 @@ const OnboardingPage = () => {
       const message =
         error?.response?.data?.message ||
         error?.message ||
-        "Failed to save your preferences. Please try again.";
+        "Failed to complete onboarding. Please try again.";
 
       setApiError(message);
     } finally {
@@ -243,9 +229,6 @@ const OnboardingPage = () => {
     }
   };
 
-  /**
-   * Finish onboarding.
-   */
   const handleFinish = () => {
     if (!validateCurrentStep()) {
       return;
@@ -254,10 +237,6 @@ const OnboardingPage = () => {
     submitOnboarding();
   };
 
-  /**
-   * Step 4 referral is optional.
-   * Therefore Skip can directly submit.
-   */
   const handleSkip = () => {
     if (step !== TOTAL_STEPS) {
       return;
@@ -267,120 +246,33 @@ const OnboardingPage = () => {
   };
 
   return (
-    <main
-      className="
-        min-h-screen
-        w-full
-        bg-background
-        text-foreground
-        flex
-        flex-col
-        px-4
-        py-5
-        sm:px-6
-        sm:py-6
-        selection:bg-primary/20
-      "
-    >
-      {/* ========================================
-          Header
-      ========================================= */}
-      <header
-        className="
-          w-full
-          max-w-xl
-          mx-auto
-          flex
-          items-center
-          justify-between
-          shrink-0
-        "
-      >
-        <span
-          className="
-            text-sm
-            font-semibold
-            tracking-[0.16em]
-            uppercase
-            text-text-primary
-          "
-        >
+    <main className="flex min-h-screen w-full flex-col bg-background px-4 py-5 text-foreground selection:bg-primary/20 sm:px-6 sm:py-6">
+      {/* Header */}
+      <header className="mx-auto flex h-auto w-full max-w-xl shrink-0 items-center justify-between">
+        <span className="text-sm font-semibold uppercase tracking-[0.16em] text-text-primary">
           Neu
           <span className="text-primary">Aspire</span>
         </span>
 
-        <span
-          className="
-            text-[11px]
-            font-medium
-            tracking-wider
-            uppercase
-            text-muted
-          "
-        >
+        <span className="text-[11px] font-medium uppercase tracking-wider text-muted">
           Setup
         </span>
       </header>
 
-      {/* ========================================
-          Main Content
-      ========================================= */}
-      <div
-        className="
-          w-full
-          max-w-xl
-          mx-auto
-          flex-1
-          flex
-          flex-col
-          justify-center
-          py-8
-        "
-      >
-        {/* Progress */}
+      {/* Content */}
+      <div className="mx-auto flex w-full max-w-xl flex-1 flex-col justify-center py-8">
         <OnboardingProgress currentStep={step} totalSteps={TOTAL_STEPS} />
 
-        {/* ======================================
-            API Error
-        ====================================== */}
         {apiError && (
           <div
-            className="
-              mb-4
-              px-3.5
-              py-2.5
-              rounded-lg
-              border
-              border-error/30
-              bg-error/10
-              text-error
-              text-xs
-              text-center
-            "
+            className="mb-4 rounded-lg border border-error/30 bg-error/10 px-3.5 py-2.5 text-center text-xs text-error"
             role="alert"
           >
             {apiError}
           </div>
         )}
 
-        {/* ======================================
-            Main Card
-        ====================================== */}
-        <div
-          className="
-            relative
-            bg-card
-            border
-            border-border
-            rounded-2xl
-            p-5
-            sm:p-7
-            shadow-xl
-            transition-all
-            duration-300
-          "
-        >
-          {/* Step 1 */}
+        <div className="relative rounded-2xl border border-border bg-card p-5 shadow-xl transition-all duration-300 sm:p-7">
           {step === 1 && (
             <OnboardingStepProfile
               formData={formData}
@@ -389,7 +281,6 @@ const OnboardingPage = () => {
             />
           )}
 
-          {/* Step 2 */}
           {step === 2 && (
             <OnboardingStepPurpose
               formData={formData}
@@ -398,7 +289,6 @@ const OnboardingPage = () => {
             />
           )}
 
-          {/* Step 3 */}
           {step === 3 && (
             <OnboardingStepExperience
               formData={formData}
@@ -407,7 +297,6 @@ const OnboardingPage = () => {
             />
           )}
 
-          {/* Step 4 */}
           {step === 4 && (
             <OnboardingStepReferral
               formData={formData}
@@ -417,111 +306,39 @@ const OnboardingPage = () => {
         </div>
       </div>
 
-      {/* ========================================
-          Footer Navigation
-      ========================================= */}
-      <footer
-        className="
-          w-full
-          max-w-xl
-          mx-auto
-          flex
-          items-center
-          justify-between
-          shrink-0
-          pt-2
-        "
-      >
-        {/* --------------------------------------
-            Left Action
-        -------------------------------------- */}
+      {/* Footer */}
+      <footer className="mx-auto flex w-full max-w-xl shrink-0 items-center justify-between pt-2">
         <div>
           {step > 1 && (
             <button
               type="button"
               onClick={handleBack}
               disabled={loading}
-              className="
-                px-3
-                py-2
-                text-xs
-                font-medium
-                text-text-secondary
-                hover:text-text-primary
-                transition-colors
-                disabled:opacity-50
-                disabled:cursor-not-allowed
-                focus:outline-none
-                focus-visible:ring-2
-                focus-visible:ring-primary/30
-                rounded-lg
-              "
+              className="rounded-lg px-3 py-2 text-xs font-medium text-text-secondary transition-colors hover:text-text-primary disabled:cursor-not-allowed disabled:opacity-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/30"
             >
               Back
             </button>
           )}
         </div>
 
-        {/* --------------------------------------
-            Right Actions
-        -------------------------------------- */}
         <div className="flex items-center gap-2">
-          {/* Step 4 Skip */}
           {step === TOTAL_STEPS && (
             <button
               type="button"
               onClick={handleSkip}
               disabled={loading}
-              className="
-                px-3
-                py-2
-                text-xs
-                font-medium
-                text-muted
-                hover:text-text-secondary
-                transition-colors
-                disabled:opacity-50
-                disabled:cursor-not-allowed
-                focus:outline-none
-                focus-visible:ring-2
-                focus-visible:ring-primary/30
-                rounded-lg
-              "
+              className="rounded-lg px-3 py-2 text-xs font-medium text-muted transition-colors hover:text-text-secondary disabled:cursor-not-allowed disabled:opacity-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/30"
             >
               Skip
             </button>
           )}
 
-          {/* Continue */}
           {step < TOTAL_STEPS && (
             <button
               type="button"
               onClick={handleNext}
               disabled={loading}
-              className="
-                min-w-24
-                px-4
-                py-2.5
-                text-xs
-                font-semibold
-                rounded-lg
-                bg-primary
-                text-primary-foreground
-                hover:bg-primary-hover
-                active:bg-primary-active
-                shadow-brand
-                transition-all
-                duration-200
-                disabled:opacity-50
-                disabled:cursor-not-allowed
-                flex
-                items-center
-                justify-center
-                gap-2
-                focus:outline-none
-                focus-visible:ring-2
-                focus-visible:ring-primary/30
-              "
+              className="flex min-w-24 items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2.5 text-xs font-semibold text-primary-foreground shadow-brand transition-all duration-200 hover:bg-primary-hover active:bg-primary-active disabled:cursor-not-allowed disabled:opacity-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/30"
             >
               Continue
               <span aria-hidden="true" className="text-sm">
@@ -530,49 +347,17 @@ const OnboardingPage = () => {
             </button>
           )}
 
-          {/* Finish */}
           {step === TOTAL_STEPS && (
             <button
               type="button"
               onClick={handleFinish}
               disabled={loading}
-              className="
-                min-w-28
-                px-4
-                py-2.5
-                text-xs
-                font-semibold
-                rounded-lg
-                bg-primary
-                text-primary-foreground
-                hover:bg-primary-hover
-                active:bg-primary-active
-                shadow-brand
-                transition-all
-                duration-200
-                disabled:opacity-50
-                disabled:cursor-not-allowed
-                flex
-                items-center
-                justify-center
-                gap-2
-                focus:outline-none
-                focus-visible:ring-2
-                focus-visible:ring-primary/30
-              "
+              className="flex min-w-28 items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2.5 text-xs font-semibold text-primary-foreground shadow-brand transition-all duration-200 hover:bg-primary-hover active:bg-primary-active disabled:cursor-not-allowed disabled:opacity-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/30"
             >
               {loading ? (
                 <>
                   <span
-                    className="
-                      w-3.5
-                      h-3.5
-                      border-2
-                      border-primary-foreground/30
-                      border-t-primary-foreground
-                      rounded-full
-                      animate-spin
-                    "
+                    className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-primary-foreground/30 border-t-primary-foreground"
                     aria-hidden="true"
                   />
                   Saving...

@@ -70,11 +70,12 @@ const LoginPage = () => {
       await handleLoginWithPassword({ email, password });
       navigate("/v1/dashboard");
     } catch (error) {
+      console.log(
+        "Login error:",
+        error?.response?.data?.message || error?.message,
+      );
       setErrors({
-        form:
-          error?.response?.data?.message ||
-          error?.message ||
-          "Invalid credentials.",
+        form: "Invalid credentials.",
       });
     }
   };
