@@ -90,7 +90,7 @@ export const markNotificationRead = asyncHandler(async (req, res) => {
       },
     },
     {
-      new: true,
+      returnDocument: "after",
     },
   );
 

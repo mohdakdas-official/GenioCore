@@ -29,7 +29,7 @@ export const createNotification = async ({
     },
     {
       upsert: true,
-      new: true,
+      returnDocument: "after",
     },
   );
 };

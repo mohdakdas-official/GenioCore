@@ -1,15 +1,15 @@
-import fs from "fs/promises";
 import yauzl from "yauzl";
 
 import CodeSnapshot from "../models/codeSnapshot.model.js";
 import ApiError from "../utils/ApiError.js";
 
-import { resolveStoragePath } from "./storage/storage.service.js";
+import { materializeSnapshot } from "./storage/storage.service.js";
 
 const MAX_FILE_LOAD_BYTES = 5 * 1024 * 1024; // 5 MB
 
 const readStreamToString = async (stream, maxBytes) => {
   const chunks = [];
+
   let totalBytes = 0;
 
   for await (const chunk of stream) {
@@ -52,28 +52,28 @@ const getSnapshotForReview = async ({ ownerId, projectId, snapshotId }) => {
 };
 
 /*
- * Async generator.
+ * Entire repository is not loaded into memory.
  *
- * Important:
- * Entire repository memory mein load nahi hota.
- * Ek-ek source file yield hoti hai.
+ * R2 object:
+ *   R2 → temp ZIP → streamed file-by-file.
+ *
+ * Local object:
+ *   existing local ZIP → streamed file-by-file.
  */
 async function* iterateSnapshotFiles({ snapshot }) {
-  const archivePath = resolveStoragePath(snapshot.storageKey);
+  let zipFile = null;
+
+  let materializedSnapshot = null;
 
   try {
-    await fs.access(archivePath);
-  } catch {
-    throw new ApiError(500, "Snapshot archive could not be found");
-  }
+    materializedSnapshot = await materializeSnapshot(snapshot.storageKey);
 
-  const zipFile = await yauzl.openPromise(archivePath, {
-    autoClose: false,
-    decodeStrings: true,
-    validateEntrySizes: true,
-  });
+    zipFile = await yauzl.openPromise(materializedSnapshot.filePath, {
+      autoClose: false,
+      decodeStrings: true,
+      validateEntrySizes: true,
+    });
 
-  try {
     for await (const entry of zipFile.eachEntry()) {
       const filePath = entry.fileName.replaceAll("\\", "/");
 
@@ -81,12 +81,6 @@ async function* iterateSnapshotFiles({ snapshot }) {
         continue;
       }
 
-      /*
-       * Sanitized ZIP should already contain
-       * only approved source files.
-       *
-       * Still keep a defensive size limit.
-       */
       if (entry.uncompressedSize > MAX_FILE_LOAD_BYTES) {
         throw new ApiError(
           413,
@@ -104,11 +98,23 @@ async function* iterateSnapshotFiles({ snapshot }) {
         content,
       };
     }
+  } catch (error) {
+    if (error instanceof ApiError) {
+      throw error;
+    }
+
+    console.error("SNAPSHOT LOAD ERROR:", error);
+
+    throw new ApiError(500, "Snapshot archive could not be processed");
   } finally {
     try {
-      zipFile.close();
+      zipFile?.close();
     } catch {
       // Already closed.
+    }
+
+    if (materializedSnapshot?.cleanup) {
+      await materializedSnapshot.cleanup();
     }
   }
 }

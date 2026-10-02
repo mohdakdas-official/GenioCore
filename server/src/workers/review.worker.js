@@ -12,7 +12,7 @@ import { REVIEW_QUEUE_NAME } from "../constants/queue.constants.js";
 
 import { createWorkerRedisConnection } from "../config/redis.js";
 
-import { selectModel } from "../ai/modelRouter.js";
+import { selectModelCandidates } from "../ai/modelRouter.js";
 
 import { executeReview } from "../ai/aiOrchestrator.js";
 
@@ -134,15 +134,22 @@ const worker = new Worker(
      * ------------------------------------------------
      */
 
-    const selectedModel = selectModel({
+    const modelCandidates = selectModelCandidates({
       reviewType: review.reviewType,
-
       routingMode: review.routingMode,
-
       requestedProvider: review.requestedProvider,
-
       requestedModel: review.requestedModel,
     });
+
+    const preferredModel = modelCandidates[0];
+
+    console.log(
+      "AI routing candidates:",
+      modelCandidates.map(
+        (model) =>
+          `${model.provider}/${model.id} (${model.routingScore ?? "MANUAL"})`,
+      ),
+    );
 
     /*
      * Store NeuAspire's selected logical model.
@@ -160,9 +167,9 @@ const worker = new Worker(
 
       {
         $set: {
-          "execution.provider": selectedModel.provider,
+          "execution.provider": preferredModel.provider,
 
-          "execution.model": selectedModel.id,
+          "execution.model": preferredModel.id,
 
           "execution.attempts": job.attemptsMade + 1,
         },
@@ -336,19 +343,74 @@ const worker = new Worker(
          * Execute AI review for this chunk.
          */
 
-        const result = await executeReview({
-          model: selectedModel,
+        let result = null;
+        let lastError = null;
+        let retryableError = null;
 
-          review,
+        for (const candidateModel of modelCandidates) {
+          try {
+            console.log(
+              `Trying ${candidateModel.provider}/${candidateModel.id} for review ${reviewId} chunk ${chunk.index}`,
+            );
 
-          input: {
-            type: "CODE_CHUNK",
+            result = await executeReview({
+              model: candidateModel,
 
-            chunkIndex: chunk.index,
+              review,
 
-            files: chunk.files,
-          },
-        });
+              input: {
+                type: "CODE_CHUNK",
+                chunkIndex: chunk.index,
+                files: chunk.files,
+              },
+            });
+
+            console.log(
+              `Provider succeeded: ${result.metadata.provider}/${result.metadata.model}`,
+            );
+
+            break;
+          } catch (error) {
+            lastError = error;
+
+            /*
+             * Keep a recoverable failure around.
+             *
+             * If every provider fails but at least one failed because of
+             * a temporary/network/provider condition, BullMQ may retry later.
+             */
+            if (error?.retryable !== false) {
+              retryableError = error;
+            }
+
+            console.warn(
+              `Provider ${candidateModel.provider}/${candidateModel.id} failed`,
+              {
+                code: error?.code ?? "UNKNOWN",
+                message: error?.message,
+                retryable: error?.retryable,
+              },
+            );
+          }
+        }
+
+        if (!result) {
+          /*
+           * Prefer a retryable error if one occurred.
+           *
+           * Otherwise all failures were effectively permanent
+           * (quota/config/etc.).
+           */
+          const finalError = retryableError ?? lastError;
+
+          if (!finalError) {
+            const error = new Error("All AI providers failed");
+            error.code = "ALL_AI_PROVIDERS_FAILED";
+            throw error;
+          }
+
+          throw finalError;
+        }
 
         /*
          * ------------------------------------------------
@@ -431,7 +493,7 @@ const worker = new Worker(
           "ANTHROPIC_QUOTA_EXHAUSTED",
         ]);
 
-        if (unrecoverableProviderErrors.has(error?.code)) {
+        if (error?.retryable === false) {
           throw new UnrecoverableError(error.message);
         }
 
@@ -486,6 +548,12 @@ const worker = new Worker(
      * different fallback models.
      */
 
+    const actualProvidersUsed = [
+      ...new Set(
+        chunkResults.map((result) => result.metadata?.provider).filter(Boolean),
+      ),
+    ];
+
     const actualModelsUsed = [
       ...new Set(
         chunkResults.map((result) => result.metadata?.model).filter(Boolean),
@@ -493,14 +561,8 @@ const worker = new Worker(
     ];
 
     const metadata = {
-      provider: selectedModel.provider,
-
-      /*
-       * If one provider model handled every chunk,
-       * store that model.
-       *
-       * Otherwise store MULTIPLE.
-       */
+      provider:
+        actualProvidersUsed.length === 1 ? actualProvidersUsed[0] : "MULTIPLE",
 
       model: actualModelsUsed.length === 1 ? actualModelsUsed[0] : "MULTIPLE",
 
