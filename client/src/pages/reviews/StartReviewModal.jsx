@@ -22,6 +22,7 @@ import { useNavigate } from "react-router-dom";
 import { getProjects } from "../../services/project.service";
 import { uploadSnapshot } from "../../services/snapshot.service";
 import { createReview } from "../../services/review.service";
+import PageMeta from "../../components/PageMeta";
 
 export const StartReviewModal = ({
   isOpen,

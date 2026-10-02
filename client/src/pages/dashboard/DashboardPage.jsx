@@ -15,6 +15,7 @@ import { ProgressMetric } from "../../components/shared/ProgressMetric";
 import { AiInsightsCard } from "../../components/shared/AiInsightsCard";
 import { useNavigate } from "react-router-dom";
 import { useDashboard } from "../../hooks/useDashboard";
+import PageMeta from "../../components/shared/PageMeta";
 
 const DashboardPage = () => {
   const navigate = useNavigate();
