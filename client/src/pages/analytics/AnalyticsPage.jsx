@@ -24,6 +24,7 @@ import { DonutChart } from "../../components/charts/DonutChart";
 import { ProgressMetric } from "../../components/shared/ProgressMetric";
 
 import { useAnalytics } from "../../hooks/useAnalytics";
+import PageMeta from "../../components/PageMeta";
 
 const RANGES = [
   {
@@ -143,287 +144,293 @@ const AnalyticsPage = () => {
   }, [scoreCategories]);
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex flex-col justify-between gap-4 border-b border-border-subtle pb-2 sm:flex-row sm:items-center">
-        <div>
-          <h2 className="text-lg font-bold tracking-tight text-text-primary">
-            Code Intelligence Analytics
-          </h2>
+    <>
+      <PageMeta
+        title="Analytics — GenioCore"
+        description="Explore review trends, issue patterns, and project-level insights across your GenioCore workspace."
+      />
+      <div className="space-y-6">
+        {/* Header */}
+        <div className="flex flex-col justify-between gap-4 border-b border-border-subtle pb-2 sm:flex-row sm:items-center">
+          <div>
+            <h2 className="text-lg font-bold tracking-tight text-text-primary">
+              Code Intelligence Analytics
+            </h2>
 
-          <p className="text-xs text-muted">
-            Real code review quality, security and finding trends across your
-            projects.
-          </p>
+            <p className="text-xs text-muted">
+              Real code review quality, security and finding trends across your
+              projects.
+            </p>
+          </div>
+
+          {/* Time range */}
+          <div className="flex self-start rounded-lg border border-border-subtle bg-card p-1 sm:self-auto">
+            {RANGES.map((range) => (
+              <button
+                key={range.id}
+                type="button"
+                onClick={() => setTimeRange(range.id)}
+                className={`rounded-md px-3 py-1 text-xs font-medium transition-colors ${
+                  timeRange === range.id
+                    ? "bg-surface-hover font-semibold text-text-primary"
+                    : "text-muted hover:text-text-secondary"
+                }`}
+              >
+                {range.label}
+              </button>
+            ))}
+          </div>
         </div>
 
-        {/* Time range */}
-        <div className="flex self-start rounded-lg border border-border-subtle bg-card p-1 sm:self-auto">
-          {RANGES.map((range) => (
-            <button
-              key={range.id}
-              type="button"
-              onClick={() => setTimeRange(range.id)}
-              className={`rounded-md px-3 py-1 text-xs font-medium transition-colors ${
-                timeRange === range.id
-                  ? "bg-surface-hover font-semibold text-text-primary"
-                  : "text-muted hover:text-text-secondary"
-              }`}
-            >
-              {range.label}
-            </button>
-          ))}
-        </div>
-      </div>
+        {/* Error */}
+        {error && (
+          <Card className="border-error/20">
+            <div className="flex items-start justify-between gap-4">
+              <div className="flex items-start gap-2">
+                <AlertCircle className="mt-0.5 h-4 w-4 shrink-0 text-error" />
 
-      {/* Error */}
-      {error && (
-        <Card className="border-error/20">
-          <div className="flex items-start justify-between gap-4">
-            <div className="flex items-start gap-2">
-              <AlertCircle className="mt-0.5 h-4 w-4 shrink-0 text-error" />
+                <div>
+                  <p className="text-xs font-medium text-error">
+                    Unable to load analytics
+                  </p>
 
-              <div>
-                <p className="text-xs font-medium text-error">
-                  Unable to load analytics
-                </p>
-
-                <p className="mt-1 text-[11px] text-muted">{error}</p>
+                  <p className="mt-1 text-[11px] text-muted">{error}</p>
+                </div>
               </div>
+
+              <Button size="sm" variant="secondary" onClick={refresh}>
+                Retry
+              </Button>
+            </div>
+          </Card>
+        )}
+
+        {isLoading ? (
+          <Card className="py-14 text-center">
+            <p className="text-xs text-muted">Loading analytics...</p>
+          </Card>
+        ) : (
+          <>
+            {/* Global metrics */}
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+              <StatCard
+                title="Reviews in Period"
+                value={filteredReviews.length.toString()}
+                subtitle={`${reviewedProjectCount} project${
+                  reviewedProjectCount === 1 ? "" : "s"
+                } reviewed`}
+                icon={FileCheck2}
+              />
+
+              <StatCard
+                title="Average Code Score"
+                value={
+                  averageScores.overall != null
+                    ? `${averageScores.overall}/100`
+                    : "—"
+                }
+                subtitle="completed reviews"
+                icon={BarChart3}
+              />
+
+              <StatCard
+                title="Average Security"
+                value={
+                  averageScores.security != null
+                    ? `${averageScores.security}/100`
+                    : "—"
+                }
+                subtitle="completed reviews"
+                icon={Shield}
+              />
+
+              <StatCard
+                title="Issues Detected"
+                value={issueTotals.total.toString()}
+                subtitle={`${issueTotals.critical} critical • ${issueTotals.high} high`}
+                icon={AlertTriangle}
+              />
             </div>
 
-            <Button size="sm" variant="secondary" onClick={refresh}>
-              Retry
-            </Button>
-          </div>
-        </Card>
-      )}
+            {/* Quality trend + severity */}
+            <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+              <Card className="lg:col-span-2">
+                <CardHeader
+                  title="Code Quality Trends"
+                  subtitle={`Score progression for completed reviews in ${rangeConfig.label.toLowerCase()}`}
+                />
 
-      {isLoading ? (
-        <Card className="py-14 text-center">
-          <p className="text-xs text-muted">Loading analytics...</p>
-        </Card>
-      ) : (
-        <>
-          {/* Global metrics */}
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            <StatCard
-              title="Reviews in Period"
-              value={filteredReviews.length.toString()}
-              subtitle={`${reviewedProjectCount} project${
-                reviewedProjectCount === 1 ? "" : "s"
-              } reviewed`}
-              icon={FileCheck2}
-            />
+                <TrendLineChart data={trendData} />
+              </Card>
 
-            <StatCard
-              title="Average Code Score"
-              value={
-                averageScores.overall != null
-                  ? `${averageScores.overall}/100`
-                  : "—"
-              }
-              subtitle="completed reviews"
-              icon={BarChart3}
-            />
+              <Card className="flex flex-col">
+                <CardHeader
+                  title="Issue Severity Distribution"
+                  subtitle="Findings from completed reviews in this period"
+                />
 
-            <StatCard
-              title="Average Security"
-              value={
-                averageScores.security != null
-                  ? `${averageScores.security}/100`
-                  : "—"
-              }
-              subtitle="completed reviews"
-              icon={Shield}
-            />
+                {issueTotals.total > 0 ? (
+                  <DonutChart data={severityData} />
+                ) : (
+                  <div className="flex min-h-48 flex-1 items-center justify-center">
+                    <p className="text-xs text-muted">
+                      No issue data available for this period.
+                    </p>
+                  </div>
+                )}
+              </Card>
+            </div>
 
-            <StatCard
-              title="Issues Detected"
-              value={issueTotals.total.toString()}
-              subtitle={`${issueTotals.critical} critical • ${issueTotals.high} high`}
-              icon={AlertTriangle}
-            />
-          </div>
+            {/* Project analytics + score categories */}
+            <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+              <Card className="overflow-hidden border-border-subtle p-0">
+                <div className="border-b border-border-subtle p-4">
+                  <h3 className="text-xs font-semibold tracking-tight text-text-primary">
+                    Project Review Snapshot
+                  </h3>
 
-          {/* Quality trend + severity */}
-          <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-            <Card className="lg:col-span-2">
-              <CardHeader
-                title="Code Quality Trends"
-                subtitle={`Score progression for completed reviews in ${rangeConfig.label.toLowerCase()}`}
-              />
-
-              <TrendLineChart data={trendData} />
-            </Card>
-
-            <Card className="flex flex-col">
-              <CardHeader
-                title="Issue Severity Distribution"
-                subtitle="Findings from completed reviews in this period"
-              />
-
-              {issueTotals.total > 0 ? (
-                <DonutChart data={severityData} />
-              ) : (
-                <div className="flex min-h-48 flex-1 items-center justify-center">
-                  <p className="text-xs text-muted">
-                    No issue data available for this period.
+                  <p className="text-[11px] text-muted">
+                    Latest completed review for each project in the selected
+                    period
                   </p>
                 </div>
-              )}
-            </Card>
-          </div>
 
-          {/* Project analytics + score categories */}
-          <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-            <Card className="overflow-hidden border-border-subtle p-0">
-              <div className="border-b border-border-subtle p-4">
-                <h3 className="text-xs font-semibold tracking-tight text-text-primary">
-                  Project Review Snapshot
-                </h3>
+                {projectAnalytics.length > 0 ? (
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-left text-xs">
+                      <thead className="border-b border-border-subtle bg-surface font-mono text-[10px] uppercase text-muted">
+                        <tr>
+                          <th className="px-4 py-2.5">Project</th>
 
-                <p className="text-[11px] text-muted">
-                  Latest completed review for each project in the selected
-                  period
-                </p>
-              </div>
+                          <th className="px-3 py-2.5">Score</th>
 
-              {projectAnalytics.length > 0 ? (
-                <div className="overflow-x-auto">
-                  <table className="w-full text-left text-xs">
-                    <thead className="border-b border-border-subtle bg-surface font-mono text-[10px] uppercase text-muted">
-                      <tr>
-                        <th className="px-4 py-2.5">Project</th>
+                          <th className="px-3 py-2.5">Issues</th>
 
-                        <th className="px-3 py-2.5">Score</th>
+                          <th className="px-4 py-2.5 text-right">
+                            Critical / High
+                          </th>
+                        </tr>
+                      </thead>
 
-                        <th className="px-3 py-2.5">Issues</th>
+                      <tbody className="divide-y divide-border-subtle">
+                        {projectAnalytics.map((item) => (
+                          <tr
+                            key={item.projectId}
+                            onClick={() =>
+                              navigate(`/v1/projects/${item.projectId}`)
+                            }
+                            className="cursor-pointer transition-colors hover:bg-surface-hover/70"
+                          >
+                            <td className="px-4 py-3">
+                              <div className="font-semibold text-text-primary">
+                                {item.name}
+                              </div>
 
-                        <th className="px-4 py-2.5 text-right">
-                          Critical / High
-                        </th>
-                      </tr>
-                    </thead>
+                              <div className="mt-0.5 font-mono text-[10px] text-muted">
+                                Latest completed review
+                              </div>
+                            </td>
 
-                    <tbody className="divide-y divide-border-subtle">
-                      {projectAnalytics.map((item) => (
-                        <tr
-                          key={item.projectId}
-                          onClick={() =>
-                            navigate(`/v1/projects/${item.projectId}`)
-                          }
-                          className="cursor-pointer transition-colors hover:bg-surface-hover/70"
-                        >
-                          <td className="px-4 py-3">
-                            <div className="font-semibold text-text-primary">
-                              {item.name}
-                            </div>
+                            <td className="px-3 py-3 font-mono">
+                              {typeof item.score === "number" ? (
+                                <span
+                                  className={
+                                    item.score >= 80
+                                      ? "font-semibold text-primary"
+                                      : "font-semibold text-warning"
+                                  }
+                                >
+                                  {item.score}
+                                  /100
+                                </span>
+                              ) : (
+                                <span className="text-muted">—</span>
+                              )}
+                            </td>
 
-                            <div className="mt-0.5 font-mono text-[10px] text-muted">
-                              Latest completed review
-                            </div>
-                          </td>
+                            <td className="px-3 py-3 font-mono text-text-secondary">
+                              {item.total}
+                            </td>
 
-                          <td className="px-3 py-3 font-mono">
-                            {typeof item.score === "number" ? (
+                            <td className="px-4 py-3 text-right font-mono text-[11px]">
                               <span
                                 className={
-                                  item.score >= 80
-                                    ? "font-semibold text-primary"
-                                    : "font-semibold text-warning"
+                                  item.critical > 0
+                                    ? "text-error"
+                                    : "text-text-secondary"
                                 }
                               >
-                                {item.score}
-                                /100
+                                {item.critical}
                               </span>
-                            ) : (
-                              <span className="text-muted">—</span>
-                            )}
-                          </td>
 
-                          <td className="px-3 py-3 font-mono text-text-secondary">
-                            {item.total}
-                          </td>
+                              <span className="text-muted"> / </span>
 
-                          <td className="px-4 py-3 text-right font-mono text-[11px]">
-                            <span
-                              className={
-                                item.critical > 0
-                                  ? "text-error"
-                                  : "text-text-secondary"
-                              }
-                            >
-                              {item.critical}
-                            </span>
+                              <span
+                                className={
+                                  item.high > 0
+                                    ? "text-warning"
+                                    : "text-text-secondary"
+                                }
+                              >
+                                {item.high}
+                              </span>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                ) : (
+                  <div className="py-12 text-center">
+                    <FolderGit2 className="mx-auto h-7 w-7 text-muted" />
 
-                            <span className="text-muted"> / </span>
+                    <h4 className="mt-3 text-sm font-semibold text-text-primary">
+                      No completed reviews
+                    </h4>
 
-                            <span
-                              className={
-                                item.high > 0
-                                  ? "text-warning"
-                                  : "text-text-secondary"
-                              }
-                            >
-                              {item.high}
-                            </span>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
+                    <p className="mt-1 text-xs text-muted">
+                      No project review data is available for this time period.
+                    </p>
+                  </div>
+                )}
+              </Card>
+
+              {/* Real average score categories */}
+              <Card className="space-y-4">
+                <CardHeader
+                  title="Average Quality Dimensions"
+                  subtitle="Average scores from completed reviews in the selected period"
+                />
+
+                {availableScoreCategories.length > 0 ? (
+                  <div className="space-y-4 py-1">
+                    {availableScoreCategories.map((category) => (
+                      <ProgressMetric
+                        key={category.label}
+                        label={`${category.label} (${category.value}/100)`}
+                        value={category.value}
+                        color={category.color}
+                      />
+                    ))}
+                  </div>
+                ) : (
+                  <div className="flex min-h-48 items-center justify-center">
+                    <p className="text-xs text-muted">
+                      No completed review scores available for this period.
+                    </p>
+                  </div>
+                )}
+
+                <div className="border-t border-border-subtle pt-3 text-[11px] text-muted">
+                  Based on {completedReviews.length} completed review
+                  {completedReviews.length === 1 ? "" : "s"} in this period.
                 </div>
-              ) : (
-                <div className="py-12 text-center">
-                  <FolderGit2 className="mx-auto h-7 w-7 text-muted" />
-
-                  <h4 className="mt-3 text-sm font-semibold text-text-primary">
-                    No completed reviews
-                  </h4>
-
-                  <p className="mt-1 text-xs text-muted">
-                    No project review data is available for this time period.
-                  </p>
-                </div>
-              )}
-            </Card>
-
-            {/* Real average score categories */}
-            <Card className="space-y-4">
-              <CardHeader
-                title="Average Quality Dimensions"
-                subtitle="Average scores from completed reviews in the selected period"
-              />
-
-              {availableScoreCategories.length > 0 ? (
-                <div className="space-y-4 py-1">
-                  {availableScoreCategories.map((category) => (
-                    <ProgressMetric
-                      key={category.label}
-                      label={`${category.label} (${category.value}/100)`}
-                      value={category.value}
-                      color={category.color}
-                    />
-                  ))}
-                </div>
-              ) : (
-                <div className="flex min-h-48 items-center justify-center">
-                  <p className="text-xs text-muted">
-                    No completed review scores available for this period.
-                  </p>
-                </div>
-              )}
-
-              <div className="border-t border-border-subtle pt-3 text-[11px] text-muted">
-                Based on {completedReviews.length} completed review
-                {completedReviews.length === 1 ? "" : "s"} in this period.
-              </div>
-            </Card>
-          </div>
-        </>
-      )}
-    </div>
+              </Card>
+            </div>
+          </>
+        )}
+      </div>
+    </>
   );
 };
 

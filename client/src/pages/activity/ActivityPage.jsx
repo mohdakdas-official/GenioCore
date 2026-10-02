@@ -19,6 +19,7 @@ import { Button } from "../../components/ui/Button";
 import { getProjects } from "../../services/project.service";
 
 import { getReviews } from "../../services/review.service";
+import PageMeta from "../../components/PageMeta";
 
 const FILTERS = ["ALL", "Review", "Security", "Project"];
 
@@ -479,138 +480,144 @@ const ActivityPage = () => {
   };
 
   return (
-    <div className="max-w-4xl space-y-6">
-      {/* Header */}
-      <div className="flex flex-col justify-between gap-4 border-b border-border-subtle pb-2 sm:flex-row sm:items-center">
-        <div>
-          <h2 className="text-lg font-bold tracking-tight text-text-primary">
-            Recent Activity
-          </h2>
+    <>
+      <PageMeta
+        title="Activity — GenioCore"
+        description="View recent activity across your GenioCore projects, reviews, and account."
+      />
+      <div className="max-w-4xl space-y-6">
+        {/* Header */}
+        <div className="flex flex-col justify-between gap-4 border-b border-border-subtle pb-2 sm:flex-row sm:items-center">
+          <div>
+            <h2 className="text-lg font-bold tracking-tight text-text-primary">
+              Recent Activity
+            </h2>
 
-          <p className="text-xs text-muted">
-            Real review, security and project events from your workspace.
-          </p>
-
-          {hasMoreData && (
-            <p className="mt-1 text-[10px] text-text-disabled">
-              Showing activity from currently loaded records.
+            <p className="text-xs text-muted">
+              Real review, security and project events from your workspace.
             </p>
-          )}
-        </div>
 
-        {/* Filters */}
-        <div className="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0">
-          {FILTERS.map((category) => (
-            <button
-              key={category}
-              type="button"
-              onClick={() => setFilter(category)}
-              className={`rounded-lg border px-3 py-1 text-xs font-medium transition-colors ${
-                filter === category
-                  ? "border-border-hover bg-surface-hover text-text-primary"
-                  : "border-transparent text-muted hover:text-text-secondary"
-              }`}
-            >
-              {category}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* Error */}
-      {error && (
-        <Card className="border-error/20">
-          <div className="flex items-start justify-between gap-4">
-            <div className="flex items-start gap-2">
-              <AlertCircle className="mt-0.5 h-4 w-4 shrink-0 text-error" />
-
-              <div>
-                <p className="text-xs font-medium text-error">
-                  Unable to load activity
-                </p>
-
-                <p className="mt-1 text-[11px] text-muted">{error}</p>
-              </div>
-            </div>
-
-            <Button size="sm" variant="secondary" onClick={loadActivity}>
-              Retry
-            </Button>
-          </div>
-        </Card>
-      )}
-
-      {/* Loading */}
-      {isLoading ? (
-        <Card className="py-12 text-center">
-          <p className="text-xs text-muted">Loading activity...</p>
-        </Card>
-      ) : (
-        <Card className="p-6">
-          {filtered.length === 0 ? (
-            <div className="py-10 text-center">
-              <Activity className="mx-auto h-7 w-7 text-muted" />
-
-              <h3 className="mt-3 text-sm font-semibold text-text-primary">
-                No activity found
-              </h3>
-
-              <p className="mt-1 text-xs text-muted">
-                {filter === "ALL"
-                  ? "No review or project activity is available yet."
-                  : `No ${filter.toLowerCase()} activity is available in the loaded records.`}
+            {hasMoreData && (
+              <p className="mt-1 text-[10px] text-text-disabled">
+                Showing activity from currently loaded records.
               </p>
+            )}
+          </div>
+
+          {/* Filters */}
+          <div className="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0">
+            {FILTERS.map((category) => (
+              <button
+                key={category}
+                type="button"
+                onClick={() => setFilter(category)}
+                className={`rounded-lg border px-3 py-1 text-xs font-medium transition-colors ${
+                  filter === category
+                    ? "border-border-hover bg-surface-hover text-text-primary"
+                    : "border-transparent text-muted hover:text-text-secondary"
+                }`}
+              >
+                {category}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Error */}
+        {error && (
+          <Card className="border-error/20">
+            <div className="flex items-start justify-between gap-4">
+              <div className="flex items-start gap-2">
+                <AlertCircle className="mt-0.5 h-4 w-4 shrink-0 text-error" />
+
+                <div>
+                  <p className="text-xs font-medium text-error">
+                    Unable to load activity
+                  </p>
+
+                  <p className="mt-1 text-[11px] text-muted">{error}</p>
+                </div>
+              </div>
+
+              <Button size="sm" variant="secondary" onClick={loadActivity}>
+                Retry
+              </Button>
             </div>
-          ) : (
-            <div className="relative space-y-8 pl-6 before:absolute before:bottom-3 before:left-2.5 before:top-3 before:w-px before:bg-border-subtle">
-              {filtered.map((item) => (
-                <div
-                  key={item.id}
-                  className="group relative flex items-start justify-between gap-4"
-                >
-                  {/* Timeline icon */}
-                  <div className="absolute -left-6 top-0.5 flex h-5 w-5 items-center justify-center rounded-full border border-border-subtle bg-surface">
-                    {getStatusIcon(item.status, item.type)}
-                  </div>
+          </Card>
+        )}
 
-                  <div className="min-w-0 space-y-1 pr-4">
-                    <div className="flex flex-wrap items-center gap-2">
-                      <h4 className="text-xs font-semibold text-text-primary">
-                        {item.title}
-                      </h4>
+        {/* Loading */}
+        {isLoading ? (
+          <Card className="py-12 text-center">
+            <p className="text-xs text-muted">Loading activity...</p>
+          </Card>
+        ) : (
+          <Card className="p-6">
+            {filtered.length === 0 ? (
+              <div className="py-10 text-center">
+                <Activity className="mx-auto h-7 w-7 text-muted" />
 
-                      <span className="rounded border border-border-subtle bg-surface px-2 py-0.5 font-mono text-[10px] text-muted">
-                        {item.project}
+                <h3 className="mt-3 text-sm font-semibold text-text-primary">
+                  No activity found
+                </h3>
 
-                        {item.meta ? ` • ${item.meta}` : ""}
+                <p className="mt-1 text-xs text-muted">
+                  {filter === "ALL"
+                    ? "No review or project activity is available yet."
+                    : `No ${filter.toLowerCase()} activity is available in the loaded records.`}
+                </p>
+              </div>
+            ) : (
+              <div className="relative space-y-8 pl-6 before:absolute before:bottom-3 before:left-2.5 before:top-3 before:w-px before:bg-border-subtle">
+                {filtered.map((item) => (
+                  <div
+                    key={item.id}
+                    className="group relative flex items-start justify-between gap-4"
+                  >
+                    {/* Timeline icon */}
+                    <div className="absolute -left-6 top-0.5 flex h-5 w-5 items-center justify-center rounded-full border border-border-subtle bg-surface">
+                      {getStatusIcon(item.status, item.type)}
+                    </div>
+
+                    <div className="min-w-0 space-y-1 pr-4">
+                      <div className="flex flex-wrap items-center gap-2">
+                        <h4 className="text-xs font-semibold text-text-primary">
+                          {item.title}
+                        </h4>
+
+                        <span className="rounded border border-border-subtle bg-surface px-2 py-0.5 font-mono text-[10px] text-muted">
+                          {item.project}
+
+                          {item.meta ? ` • ${item.meta}` : ""}
+                        </span>
+                      </div>
+
+                      <p className="text-xs leading-relaxed text-muted">
+                        {item.description}
+                      </p>
+
+                      <span className="block pt-0.5 font-mono text-[10px] text-text-disabled">
+                        {formatDate(item.timestamp)}
                       </span>
                     </div>
 
-                    <p className="text-xs leading-relaxed text-muted">
-                      {item.description}
-                    </p>
-
-                    <span className="block pt-0.5 font-mono text-[10px] text-text-disabled">
-                      {formatDate(item.timestamp)}
-                    </span>
+                    {item.link && (
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        icon={ExternalLink}
+                        onClick={() => navigate(item.link)}
+                        className="shrink-0 opacity-0 transition-opacity group-hover:opacity-100"
+                      />
+                    )}
                   </div>
-
-                  {item.link && (
-                    <Button
-                      size="sm"
-                      variant="ghost"
-                      icon={ExternalLink}
-                      onClick={() => navigate(item.link)}
-                      className="shrink-0 opacity-0 transition-opacity group-hover:opacity-100"
-                    />
-                  )}
-                </div>
-              ))}
-            </div>
-          )}
-        </Card>
-      )}
-    </div>
+                ))}
+              </div>
+            )}
+          </Card>
+        )}
+      </div>
+    </>
   );
 };
 
