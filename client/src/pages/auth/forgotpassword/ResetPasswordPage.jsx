@@ -195,7 +195,6 @@ export default function ResetPasswordPage() {
         newPassword: data.password,
       });
       setIsSuccess(true);
-      navigate("/v1/auth/login");
     } catch (error) {
       setApiError(
         error?.response?.data?.message ||
@@ -262,328 +261,167 @@ export default function ResetPasswordPage() {
         {/* Left */}
         <div
           className="
-            relative flex flex-col
-            justify-between
-            overflow-hidden
-            border-b border-border
-            bg-surface p-8
-            lg:col-span-6
-            lg:border-b-0
-            lg:border-r
-            lg:p-12
-          "
+    relative flex flex-col
+    justify-between
+    overflow-hidden
+    border-b border-border
+    bg-surface p-8
+    lg:col-span-6
+    lg:border-b-0
+    lg:border-r
+    lg:p-12
+  "
         >
           {/* Grid */}
           <div
             aria-hidden="true"
             className="
-              pointer-events-none
-              absolute inset-0
-              bg-[linear-gradient(to_right,var(--border-subtle)_1px,transparent_1px),linear-gradient(to_bottom,var(--border-subtle)_1px,transparent_1px)]
-              bg-[size:24px_24px]
-              opacity-40
-            "
+      pointer-events-none
+      absolute inset-0
+      bg-[linear-gradient(to_right,var(--border-subtle)_1px,transparent_1px),linear-gradient(to_bottom,var(--border-subtle)_1px,transparent_1px)]
+      bg-[size:24px_24px]
+      opacity-40
+    "
           />
 
           {/* Brand */}
           <div className="relative z-10">
             <div
               className="
-                mb-6 inline-flex
-                items-center gap-2
-                rounded-full
-                border border-primary/20
-                bg-primary/10
-                px-3 py-1.5
-                font-mono text-xs
-                text-primary
-              "
+        mb-6 inline-flex
+        items-center gap-2
+        rounded-full
+        border border-primary/20
+        bg-primary/10
+        px-3 py-1.5
+        text-xs font-medium
+        text-primary
+      "
             >
               <Sparkles className="h-3.5 w-3.5" />
-
-              <span>NeuAspire Credentials Vault</span>
+              <span>GenioCore account recovery</span>
             </div>
 
-            <h1
-              className="
-                text-3xl font-bold
-                tracking-tight
-                text-text-primary
-                lg:text-4xl
-              "
-            >
-              NeuAspire
+            <h1 className="text-3xl font-bold tracking-tight text-text-primary lg:text-4xl">
+              GenioCore
             </h1>
 
-            <p
-              className="
-                mt-2 text-base
-                font-medium
-                text-text-secondary
-              "
-            >
-              Secure your account.
+            <p className="mt-2 text-base font-medium text-text-secondary">
+              Create a new password.
             </p>
 
-            <p
-              className="
-                mt-1 text-sm
-                leading-relaxed
-                text-muted
-              "
-            >
-              Create a strong new password and continue building better software
-              with NeuAspire.
+            <p className="mt-1 max-w-lg text-sm leading-relaxed text-muted">
+              Complete the recovery process by setting a new password for your
+              GenioCore account.
             </p>
           </div>
 
-          {/* Terminal */}
+          {/* Reset Preview */}
           <div className="relative z-10 my-8">
             <div
               className="
-                relative rounded-xl
-                border border-border
-                bg-background/95 p-5
-                font-mono text-xs
-                text-text-secondary
-                shadow-2xl
-              "
+        relative rounded-xl
+        border border-border
+        bg-background/95 p-5
+        font-mono text-xs
+        text-text-secondary
+        shadow-2xl
+      "
             >
-              <div
-                className="
-                  mb-3 flex
-                  items-center
-                  justify-between
-                  border-b
-                  border-border-subtle
-                  pb-3 text-muted
-                "
-              >
+              {/* Header */}
+              <div className="mb-4 flex items-center justify-between border-b border-border-subtle pb-3">
                 <div className="flex items-center gap-1.5">
-                  <span
-                    className="
-                      inline-block
-                      h-2.5 w-2.5
-                      rounded-full
-                      bg-error/80
-                    "
-                  />
-
-                  <span
-                    className="
-                      inline-block
-                      h-2.5 w-2.5
-                      rounded-full
-                      bg-warning/80
-                    "
-                  />
-
-                  <span
-                    className="
-                      inline-block
-                      h-2.5 w-2.5
-                      rounded-full
-                      bg-success/80
-                    "
-                  />
+                  <span className="inline-block h-2.5 w-2.5 rounded-full bg-error/80" />
+                  <span className="inline-block h-2.5 w-2.5 rounded-full bg-warning/80" />
+                  <span className="inline-block h-2.5 w-2.5 rounded-full bg-success/80" />
                 </div>
 
-                <div
-                  className="
-                    flex items-center gap-1
-                    text-[11px]
-                    text-muted
-                  "
-                >
+                <div className="flex items-center gap-1.5 text-[11px] text-muted">
                   <Terminal className="h-3.5 w-3.5 text-primary" />
-
-                  <span>credentials-update.sec</span>
+                  <span>password-reset</span>
                 </div>
               </div>
 
               {/* Code */}
-              <div
-                className="
-                  space-y-1
-                  leading-relaxed
-                  text-muted
-                "
-              >
+              <div className="space-y-1 leading-relaxed text-muted">
                 <p>
                   <span className="text-info">const</span> result ={" "}
                   <span className="text-primary">await</span>{" "}
-                  vault.rotateKey(token);
+                  resetPassword(token);
                 </p>
 
                 <p className="text-text-disabled">
-                  // Zero-knowledge password re-encryption
+                  // recovery token required before password update
                 </p>
               </div>
 
-              {/* Checklist */}
-              <div className="mt-4 space-y-2">
-                <div
-                  className="
-                    flex items-center
-                    justify-between
-                    rounded-md
-                    border
-                    border-border-subtle
-                    bg-surface/60
-                    px-2.5 py-1.5
-                  "
-                >
-                  <span
-                    className="
-                      flex items-center gap-2
-                      text-text-secondary
-                    "
-                  >
-                    <KeyRound className="h-3.5 w-3.5 text-success" />
-                    Verified OTP Token
+              {/* Flow */}
+              <div className="mt-5 space-y-2">
+                <div className="flex items-center justify-between rounded-lg border border-border-subtle bg-surface/60 px-3 py-2">
+                  <span className="flex items-center gap-2 text-text-secondary">
+                    <KeyRound className="h-3.5 w-3.5 text-primary" />
+                    Recovery Verification
                   </span>
 
-                  <span
-                    className="
-                      text-[11px]
-                      font-semibold
-                      text-success
-                    "
-                  >
-                    Authorized
-                  </span>
+                  <span className="text-[10px] text-muted">Required</span>
                 </div>
 
-                <div
-                  className="
-                    flex items-center
-                    justify-between
-                    rounded-md
-                    border
-                    border-border-subtle
-                    bg-surface/60
-                    px-2.5 py-1.5
-                  "
-                >
-                  <span
-                    className="
-                      flex items-center gap-2
-                      text-text-secondary
-                    "
-                  >
-                    <LockKeyhole className="h-3.5 w-3.5 text-success" />
-                    Argon2id Key Derivation
+                <div className="flex items-center justify-between rounded-lg border border-border-subtle bg-surface/60 px-3 py-2">
+                  <span className="flex items-center gap-2 text-text-secondary">
+                    <LockKeyhole className="h-3.5 w-3.5 text-primary" />
+                    New Password
                   </span>
 
-                  <span
-                    className="
-                      text-[11px]
-                      font-semibold
-                      text-success
-                    "
-                  >
-                    Enforced
-                  </span>
+                  <span className="text-[10px] text-muted">8+ characters</span>
                 </div>
 
-                <div
-                  className="
-                    flex items-center
-                    justify-between
-                    rounded-md
-                    border
-                    border-border-subtle
-                    bg-surface/60
-                    px-2.5 py-1.5
-                  "
-                >
-                  <span
-                    className="
-                      flex items-center gap-2
-                      text-text-secondary
-                    "
-                  >
-                    <ShieldCheck className="h-3.5 w-3.5 text-success" />
-                    Session Invalidation
+                <div className="flex items-center justify-between rounded-lg border border-border-subtle bg-surface/60 px-3 py-2">
+                  <span className="flex items-center gap-2 text-text-secondary">
+                    <ShieldCheck className="h-3.5 w-3.5 text-primary" />
+                    Password Confirmation
                   </span>
 
-                  <span
-                    className="
-                      text-[11px]
-                      font-semibold
-                      text-success
-                    "
-                  >
-                    All Devices
-                  </span>
+                  <span className="text-[10px] text-muted">Match required</span>
                 </div>
               </div>
 
-              {/* Status */}
-              <div
-                className="
-                  mt-4 flex
-                  items-center
-                  justify-between
-                  border-t
-                  border-border-subtle
-                  pt-3
-                "
-              >
-                <div>
-                  <span
-                    className="
-                      text-[10px]
-                      uppercase
-                      tracking-wider
-                      text-muted
-                    "
-                  >
-                    Vault Pipeline
-                  </span>
-
-                  <p
-                    className="
-                      text-lg font-bold
-                      tracking-tight
-                      text-text-primary
-                    "
-                  >
-                    Ready for Reset
-                  </p>
+              <div className="mt-5 border-t border-border-subtle pt-4">
+                <div className="mb-3 text-[10px] uppercase tracking-wider text-muted">
+                  Reset flow
                 </div>
 
-                <div
-                  className="
-                    flex items-center
-                    gap-1.5 rounded
-                    border
-                    border-success/30
-                    bg-success/10
-                    px-2.5 py-1
-                    text-[11px]
-                    font-semibold
-                    text-success
-                  "
-                >
-                  <CheckCircle2 className="h-3.5 w-3.5" />
-                  Secured
+                <div className="flex flex-wrap items-center gap-2 text-[10px]">
+                  <span className="rounded-md border border-border-subtle bg-surface px-2 py-1 text-text-secondary">
+                    Verify
+                  </span>
+
+                  <span className="text-muted">→</span>
+
+                  <span className="rounded-md border border-border-subtle bg-surface px-2 py-1 text-text-secondary">
+                    New Password
+                  </span>
+
+                  <span className="text-muted">→</span>
+
+                  <span className="rounded-md border border-primary/20 bg-primary/10 px-2 py-1 text-primary">
+                    Sign In
+                  </span>
                 </div>
               </div>
             </div>
           </div>
 
           {/* Footer */}
-          <div
-            className="
-              relative z-10
-              flex items-center
-              justify-between
-              text-xs text-muted
-            "
-          >
-            <span>SOC2 Type II Certified</span>
-            <span>Zero-Trust Infrastructure</span>
+          <div className="relative z-10 flex flex-wrap items-center gap-x-5 gap-y-2 text-xs text-muted">
+            <span className="flex items-center gap-1.5">
+              <CheckCircle2 className="h-3.5 w-3.5 text-primary" />
+              Verified recovery flow
+            </span>
+
+            <span className="flex items-center gap-1.5">
+              <CheckCircle2 className="h-3.5 w-3.5 text-primary" />
+              Password validation
+            </span>
           </div>
         </div>
 
@@ -673,7 +511,7 @@ export default function ResetPasswordPage() {
                   </h2>
 
                   <p className="mt-1 text-sm text-muted">
-                    Create a new password for your NeuAspire account.
+                    Create a new password for your GenioCore account.
                   </p>
                 </div>
 

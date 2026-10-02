@@ -24,7 +24,7 @@ const createSnapshot = async ({ ownerId, projectId, uploadedFilePath }) => {
 
   const sanitizedZipPath = path.join(
     os.tmpdir(),
-    `neuaspire-sanitized-${crypto.randomUUID()}.zip`,
+    `geniocore-sanitized-${crypto.randomUUID()}.zip`,
   );
 
   try {

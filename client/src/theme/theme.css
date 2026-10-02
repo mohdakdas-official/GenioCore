@@ -1,5 +1,5 @@
 /* =========================================================
-   NeuAspire — Design Tokens
+   GenioCore — Design Tokens
    ========================================================= */
 
 :root {
@@ -284,7 +284,7 @@ body {
 }
 
 /* =========================================================
-   NeuAspire — Micro-Interactions & Transitions
+   GenioCore — Micro-Interactions & Transitions
    ========================================================= */
 
 @keyframes fadeIn {

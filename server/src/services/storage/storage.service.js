@@ -237,7 +237,7 @@ const materializeSnapshot = async (storageKey) => {
 
   const temporaryPath = path.join(
     os.tmpdir(),
-    `neuaspire-review-${crypto.randomUUID()}.zip`,
+    `geniocore-review-${crypto.randomUUID()}.zip`,
   );
 
   try {

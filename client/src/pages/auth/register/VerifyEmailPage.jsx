@@ -300,411 +300,254 @@ export default function VerifyEmailPage() {
 
         <div
           className="
-            lg:col-span-6
-            bg-gradient-to-b
-            from-surface
-            to-background
-            p-8
-            lg:p-12
-            flex
-            flex-col
-            justify-between
-            border-b
-            lg:border-b-0
-            lg:border-r
-            border-border
-            relative
-            overflow-hidden
-          "
+    lg:col-span-6
+    bg-gradient-to-b
+    from-surface
+    to-background
+    p-8
+    lg:p-12
+    flex
+    flex-col
+    justify-between
+    border-b
+    lg:border-b-0
+    lg:border-r
+    border-border
+    relative
+    overflow-hidden
+  "
         >
           {/* Grid Background */}
           <div
             className="
-              absolute
-              inset-0
-              bg-[linear-gradient(to_right,rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.02)_1px,transparent_1px)]
-              bg-[size:24px_24px]
-              pointer-events-none
-            "
+      absolute
+      inset-0
+      bg-[linear-gradient(to_right,rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.02)_1px,transparent_1px)]
+      bg-[size:24px_24px]
+      pointer-events-none
+    "
             aria-hidden="true"
           />
 
           {/* Intro */}
           <div className="relative z-10">
-            {/* Badge */}
             <div
               className="
-                inline-flex
-                items-center
-                gap-2
-                px-3
-                py-1.5
-                rounded-full
-                bg-primary/10
-                border
-                border-primary/20
-                text-primary
-                text-xs
-                font-mono
-                mb-6
-              "
+        inline-flex
+        items-center
+        gap-2
+        px-3
+        py-1.5
+        rounded-full
+        bg-primary/10
+        border
+        border-primary/20
+        text-primary
+        text-xs
+        font-medium
+        mb-6
+      "
             >
               <Sparkles className="w-3.5 h-3.5" />
-
-              <span>NeuAspire Account Verification</span>
+              <span>GenioCore email verification</span>
             </div>
 
-            {/* Brand */}
             <h1
               className="
-                text-3xl
-                lg:text-4xl
-                font-bold
-                tracking-tight
-                text-text-primary
-              "
+        text-3xl
+        lg:text-4xl
+        font-bold
+        tracking-tight
+        text-text-primary
+      "
             >
-              NeuAspire
+              GenioCore
             </h1>
 
-            {/* Subtitle */}
             <p
               className="
-                mt-2
-                text-base
-                text-text-secondary
-                font-medium
-              "
+        mt-2
+        text-base
+        text-text-secondary
+        font-medium
+      "
             >
-              Verify your developer profile.
+              Verify your email address.
             </p>
 
-            {/* Description */}
             <p
               className="
-                mt-1
-                text-sm
-                text-muted
-              "
+        mt-1
+        max-w-lg
+        text-sm
+        leading-6
+        text-muted
+      "
             >
-              Confirm your email to activate AI code reviews, workspace
-              collaboration, and repository integrations.
+              Enter the verification code sent to your email to activate your
+              account and continue to GenioCore.
             </p>
           </div>
 
-          {/* =======================================================
-              TERMINAL CARD
-          ======================================================== */}
-
+          {/* Verification Preview */}
           <div className="my-8 relative z-10">
             <div
               className="
-                rounded-xl
-                border
-                border-border
-                bg-background/95
-                shadow-2xl
-                p-5
-                font-mono
-                text-xs
-                text-text-secondary
-                relative
-              "
+        rounded-xl
+        border
+        border-border
+        bg-background/95
+        shadow-2xl
+        p-5
+        font-mono
+        text-xs
+        text-text-secondary
+        relative
+      "
             >
               {/* Terminal Header */}
               <div
                 className="
-                  flex
-                  items-center
-                  justify-between
-                  pb-3
-                  mb-3
-                  border-b
-                  border-border-subtle
-                  text-muted
-                "
+          flex
+          items-center
+          justify-between
+          pb-3
+          mb-4
+          border-b
+          border-border-subtle
+          text-muted
+        "
               >
-                {/* Window Dots */}
                 <div className="flex items-center gap-1.5">
-                  <span
-                    className="
-                      w-2.5
-                      h-2.5
-                      rounded-full
-                      bg-error/80
-                      inline-block
-                    "
-                  />
-
-                  <span
-                    className="
-                      w-2.5
-                      h-2.5
-                      rounded-full
-                      bg-warning/80
-                      inline-block
-                    "
-                  />
-
-                  <span
-                    className="
-                      w-2.5
-                      h-2.5
-                      rounded-full
-                      bg-success/80
-                      inline-block
-                    "
-                  />
+                  <span className="w-2.5 h-2.5 rounded-full bg-error/80 inline-block" />
+                  <span className="w-2.5 h-2.5 rounded-full bg-warning/80 inline-block" />
+                  <span className="w-2.5 h-2.5 rounded-full bg-success/80 inline-block" />
                 </div>
 
-                {/* Terminal Name */}
-                <div
-                  className="
-                    flex
-                    items-center
-                    gap-1
-                    text-[11px]
-                    text-muted
-                  "
-                >
-                  <Terminal
-                    className="
-                      w-3.5
-                      h-3.5
-                      text-primary
-                    "
-                  />
-
-                  <span>identity-verify.sec</span>
+                <div className="flex items-center gap-1 text-[11px] text-muted">
+                  <Terminal className="w-3.5 h-3.5 text-primary" />
+                  <span>email-verification</span>
                 </div>
               </div>
 
-              {/* Terminal Content */}
-              <div
-                className="
-                  space-y-1
-                  text-muted
-                  leading-relaxed
-                "
-              >
+              {/* Code */}
+              <div className="space-y-1 text-muted leading-relaxed">
                 <p>
                   <span className="text-info">const</span> account ={" "}
-                  <span className="text-primary">await</span>{" "}
-                  auth.activate(user);
+                  <span className="text-primary">await</span> verifyEmail(otp);
                 </p>
 
-                <p className="text-muted">
-                  // Awaiting email confirmation challenge
+                <p className="text-text-disabled">
+                  // confirm email ownership before account activation
                 </p>
               </div>
 
-              {/* Security Checks */}
-              <div className="mt-4 space-y-2">
-                {/* Identity Check */}
+              {/* Verification Flow */}
+              <div className="mt-5 space-y-2">
                 <div
                   className="
-                    flex
-                    items-center
-                    justify-between
-                    px-2.5
-                    py-1.5
-                    rounded-md
-                    bg-surface-hover
-                    border
-                    border-border-subtle
-                  "
+            flex
+            items-center
+            justify-between
+            px-3
+            py-2
+            rounded-lg
+            bg-surface-hover
+            border
+            border-border-subtle
+          "
                 >
-                  <span
-                    className="
-                      flex
-                      items-center
-                      gap-2
-                      text-text-secondary
-                    "
-                  >
-                    <ShieldCheck
-                      className="
-                        w-3.5
-                        h-3.5
-                        text-success
-                      "
-                    />
-                    Developer Identity Check
+                  <span className="flex items-center gap-2 text-text-secondary">
+                    <MailCheck className="w-3.5 h-3.5 text-primary" />
+                    Email Address
                   </span>
 
-                  <span
-                    className="
-                      text-success
-                      font-semibold
-                      text-[11px]
-                    "
-                  >
-                    Enforced
-                  </span>
+                  <span className="text-[10px] text-muted">Provided</span>
                 </div>
 
-                {/* OTP Hash */}
                 <div
                   className="
-                    flex
-                    items-center
-                    justify-between
-                    px-2.5
-                    py-1.5
-                    rounded-md
-                    bg-surface-hover
-                    border
-                    border-border-subtle
-                  "
+            flex
+            items-center
+            justify-between
+            px-3
+            py-2
+            rounded-lg
+            bg-surface-hover
+            border
+            border-border-subtle
+          "
                 >
-                  <span
-                    className="
-                      flex
-                      items-center
-                      gap-2
-                      text-text-secondary
-                    "
-                  >
-                    <KeyRound
-                      className="
-                        w-3.5
-                        h-3.5
-                        text-success
-                      "
-                    />
-                    Encrypted OTP Hash
+                  <span className="flex items-center gap-2 text-text-secondary">
+                    <KeyRound className="w-3.5 h-3.5 text-primary" />
+                    Verification Code
                   </span>
 
-                  <span
-                    className="
-                      text-success
-                      font-semibold
-                      text-[11px]
-                    "
-                  >
-                    Active
-                  </span>
+                  <span className="text-[10px] text-muted">6 digits</span>
                 </div>
 
-                {/* Zero Trust */}
                 <div
                   className="
-                    flex
-                    items-center
-                    justify-between
-                    px-2.5
-                    py-1.5
-                    rounded-md
-                    bg-surface-hover
-                    border
-                    border-border-subtle
-                  "
+            flex
+            items-center
+            justify-between
+            px-3
+            py-2
+            rounded-lg
+            bg-surface-hover
+            border
+            border-border-subtle
+          "
                 >
-                  <span
-                    className="
-                      flex
-                      items-center
-                      gap-2
-                      text-text-secondary
-                    "
-                  >
-                    <LockKeyhole
-                      className="
-                        w-3.5
-                        h-3.5
-                        text-success
-                      "
-                    />
-                    Zero-Trust Access Gate
+                  <span className="flex items-center gap-2 text-text-secondary">
+                    <CheckCircle2 className="w-3.5 h-3.5 text-primary" />
+                    Account Activation
                   </span>
 
-                  <span
-                    className="
-                      text-success
-                      font-semibold
-                      text-[11px]
-                    "
-                  >
-                    Pending
+                  <span className="text-[10px] text-muted">
+                    After verification
                   </span>
                 </div>
               </div>
 
-              {/* Account State */}
-              <div
-                className="
-                  mt-4
-                  pt-3
-                  border-t
-                  border-border-subtle
-                  flex
-                  items-center
-                  justify-between
-                "
-              >
-                <div>
-                  <span
-                    className="
-                      text-[10px]
-                      uppercase
-                      tracking-wider
-                      text-muted
-                    "
-                  >
-                    Account State
-                  </span>
-
-                  <p
-                    className="
-                      text-lg
-                      font-bold
-                      text-text-primary
-                      tracking-tight
-                    "
-                  >
-                    Pending Verification
-                  </p>
+              {/* Flow */}
+              <div className="mt-5 pt-4 border-t border-border-subtle">
+                <div className="mb-3 text-[10px] uppercase tracking-wider text-muted">
+                  Verification flow
                 </div>
 
-                {/* Protected Badge */}
-                <div
-                  className="
-                    flex
-                    items-center
-                    gap-1.5
-                    px-2.5
-                    py-1
-                    rounded
-                    bg-success/15
-                    border
-                    border-success/30
-                    text-success
-                    text-[11px]
-                    font-semibold
-                  "
-                >
-                  <CheckCircle2 className="w-3.5 h-3.5" />
-                  Protected
+                <div className="flex flex-wrap items-center gap-2 text-[10px]">
+                  <span className="px-2 py-1 rounded-md bg-surface border border-border-subtle text-text-secondary">
+                    Email
+                  </span>
+
+                  <span className="text-muted">→</span>
+
+                  <span className="px-2 py-1 rounded-md bg-surface border border-border-subtle text-text-secondary">
+                    OTP
+                  </span>
+
+                  <span className="text-muted">→</span>
+
+                  <span className="px-2 py-1 rounded-md bg-primary/10 border border-primary/20 text-primary">
+                    Activated
+                  </span>
                 </div>
               </div>
             </div>
           </div>
 
-          {/* Left Footer */}
-          <div
-            className="
-              relative
-              z-10
-              text-xs
-              text-muted
-              flex
-              items-center
-              justify-between
-            "
-          >
-            <span>Automated AI Provisioning</span>
+          {/* Footer */}
+          <div className="relative z-10 flex flex-wrap items-center gap-x-5 gap-y-2 text-xs text-muted">
+            <span className="flex items-center gap-1.5">
+              <CheckCircle2 className="w-3.5 h-3.5 text-primary" />
+              Email verification
+            </span>
 
-            <span>Secure Dev Platform</span>
+            <span className="flex items-center gap-1.5">
+              <CheckCircle2 className="w-3.5 h-3.5 text-primary" />
+              One-time passcode
+            </span>
           </div>
         </div>
 

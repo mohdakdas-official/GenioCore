@@ -10,7 +10,7 @@ import OnboardingRoute from "./OnboardingRoute";
 import PublicRoute from "./PublicRoute";
 import DashboardRoute from "./DashboardRoute";
 import OnboardingPage from "../pages/onboarding/OnboardingPage";
-import HomePage from "../pages/landing/HomePage";
+import LandingPage from "../pages/landing/LandingPage";
 import { ChevronLeft } from "lucide-react";
 import DashboardPage from "../pages/dashboard/DashboardPage";
 import AppLayout from "../layouts/AppLayout";
@@ -30,7 +30,7 @@ const AppRouter = () => {
     <>
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<HomePage />} />
+          <Route path="/" element={<LandingPage />} />
           <Route path="/v1">
             <Route path="auth">
               <Route element={<PublicRoute />}>

@@ -171,17 +171,16 @@ export const Sidebar = ({
             {!isCollapsed && (
               <div className="flex flex-col">
                 <span className="text-sm font-semibold leading-tight tracking-tight text-text-primary">
-                  NeuAspire
+                  GenioCore
                 </span>
 
                 <span className="font-mono text-[10px] leading-tight text-muted">
-                  AI Code Engine
+                  AI Code Review
                 </span>
               </div>
             )}
           </div>
 
-          {/* Collapse */}
           <button
             type="button"
             onClick={() => setIsCollapsed(!isCollapsed)}

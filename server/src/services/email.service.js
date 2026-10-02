@@ -49,7 +49,7 @@ export const sendVerificationOTP = async (email, otp, fullname) => {
 
 
 export const sendLoginOTP = async (email, otp, fullname) => {
-    const subject = "Your NeuAspire Login Code"
+    const subject = "Your GenioCore Login Code"
     const htmlContent = loginOTPTemplate(fullname, otp)
     await sendEmail({
         to: email,
@@ -59,7 +59,7 @@ export const sendLoginOTP = async (email, otp, fullname) => {
     })
 }
 export const sendPasswordResetOTP = async (email, otp, fullname) => {
-    const subject = "Reset Your NeuAspire Password"
+    const subject = "Reset Your GenioCore Password"
     const htmlContent = resetPasswordTemplate(fullname, otp)
     await sendEmail({
         to: email,

@@ -170,7 +170,7 @@ ${file.content}
     .join("\n");
 
   return `
-You are the code review engine for NeuAspire.
+You are the code review engine for GenioCore.
 
 Review type:
 ${reviewType}

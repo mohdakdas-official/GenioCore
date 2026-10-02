@@ -552,8 +552,9 @@ export const StartReviewModal = ({
                     value: "FULL",
                     label: "Full Review",
                     description:
-                      "Security, performance, maintainability and reliability",
+                      "Security, performance, and maintainability analysis",
                   },
+                  ,
                   {
                     value: "SECURITY",
                     label: "Security",
@@ -622,7 +623,7 @@ export const StartReviewModal = ({
                     </div>
 
                     <div className="text-[10px] text-muted">
-                      NeuAspire selects an available AI model automatically.
+                      GenioCore selects an available AI model automatically.
                     </div>
                   </div>
                 </div>

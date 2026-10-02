@@ -31,7 +31,7 @@ const OnboardingStepPurpose = ({ formData, updateFormData, error }) => {
       {/* Header */}
       <div className="text-center space-y-1">
         <h2 className="text-xl sm:text-2xl font-semibold tracking-tight text-text-primary">
-          What brings you to NeuAspire?
+          What brings you to GenioCore?
         </h2>
 
         <p className="text-sm text-text-secondary">

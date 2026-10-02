@@ -1,44 +1,10 @@
 export const TOTAL_STEPS = 4;
 
 /**
- * Predefined avatars.
- *
- * The frontend keeps the avatar ID internally.
- * Before sending the request to the backend,
- * the ID is converted into an absolute URL.
+ * Predefined avatars are currently disabled.
+ * User avatars are handled separately through the profile/avatar flow.
  */
-export const AVATAR_OPTIONS = [
-  {
-    id: "avatar-1",
-    label: "Developer",
-    src: "/avatars/avatar-1.png",
-  },
-  {
-    id: "avatar-2",
-    label: "Explorer",
-    src: "/avatars/avatar-2.png",
-  },
-  {
-    id: "avatar-3",
-    label: "Builder",
-    src: "/avatars/avatar-3.png",
-  },
-  {
-    id: "avatar-4",
-    label: "Thinker",
-    src: "/avatars/avatar-4.png",
-  },
-  {
-    id: "avatar-5",
-    label: "Creator",
-    src: "/avatars/avatar-5.png",
-  },
-  {
-    id: "avatar-6",
-    label: "Engineer",
-    src: "/avatars/avatar-6.png",
-  },
-];
+export const AVATAR_OPTIONS = [];
 
 /**
  * Backend expects these exact enum values.
@@ -72,7 +38,7 @@ export const PURPOSE_OPTIONS = [
   {
     value: "OTHER",
     label: "Other",
-    description: "Something else you want to achieve with NeuAspire.",
+    description: "Something else you want to achieve with GenioCore.",
   },
 ];
 

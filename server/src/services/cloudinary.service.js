@@ -10,7 +10,7 @@ export const uploadAvatarImage = async ({ buffer, userId }) => {
   return new Promise((resolve, reject) => {
     const uploadStream = cloudinary.uploader.upload_stream(
       {
-        folder: "neuaspire/avatars",
+        folder: "geniocore/avatars",
 
         public_id: `user-${userId}-${Date.now()}`,
 

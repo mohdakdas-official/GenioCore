@@ -1,9 +1,4 @@
-const emailLayout = ({
-  title,
-  subtitle,
-  fullname,
-  otp,
-}) => {
+const emailLayout = ({ title, subtitle, fullname, otp }) => {
   return `
 <!doctype html>
 <html lang="en">
@@ -179,8 +174,8 @@ const emailLayout = ({
             <tr>
               <td style="vertical-align: middle; background-color: #0f172a">
                 <img
-                  src=${"../assets/logos-favicons/neuaspire-temp-sitelogo1.svg"}
-                  alt="NeuAspire Logo"
+                  src=${"../assets/logos-favicons/geniocore-temp-sitelogo1.svg"}
+                  alt="GenioCore Logo"
                   width="auto"
                   height="30"
                 />
@@ -228,7 +223,7 @@ const emailLayout = ({
           <p class="footer-text">
             This is an automated system message. Please do not reply directly to
             this email.<br />
-            © 2026 NeuAspire Inc. All rights reserved.
+            © 2026 GenioCore Inc. All rights reserved.
           </p>
           <div class="footer-links">
             <a href="#">Privacy Policy</a>

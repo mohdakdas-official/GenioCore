@@ -40,7 +40,7 @@ const Sidebar = () => {
         </div>
 
         <div>
-          <p className="text-sm font-bold text-text-primary">NeuAspire</p>
+          <p className="text-sm font-bold text-text-primary">GenioCore</p>
 
           <p className="text-xs text-text-muted">AI Code Review</p>
         </div>
@@ -72,7 +72,10 @@ const Sidebar = () => {
       </nav>
 
       <div className="border-t border-border p-4">
-        <p className="text-xs text-text-muted">NeuAspire v1</p>
+        <div className="flex flex-col gap-0.5">
+          <p className="text-xs font-medium text-text-secondary">GenioCore</p>
+          <p className="text-[10px] text-text-muted">An Entellens product</p>
+        </div>
       </div>
     </aside>
   );

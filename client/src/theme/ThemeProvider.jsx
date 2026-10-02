@@ -2,7 +2,8 @@ import { createContext, useLayoutEffect, useState } from "react";
 
 export const ThemeContext = createContext(null);
 
-const THEME_STORAGE_KEY = "neuaspire-theme";
+const THEME_STORAGE_KEY = "geniocore-theme";
+const LEGACY_THEME_STORAGE_KEY = "geniocore-theme";
 
 const VALID_THEMES = ["dark", "light", "system"];
 
@@ -11,6 +12,15 @@ const getInitialTheme = () => {
 
   if (VALID_THEMES.includes(storedTheme)) {
     return storedTheme;
+  }
+
+  const legacyTheme = localStorage.getItem(LEGACY_THEME_STORAGE_KEY);
+
+  if (VALID_THEMES.includes(legacyTheme)) {
+    localStorage.setItem(THEME_STORAGE_KEY, legacyTheme);
+    localStorage.removeItem(LEGACY_THEME_STORAGE_KEY);
+
+    return legacyTheme;
   }
 
   return "system";
@@ -29,7 +39,6 @@ export const ThemeProvider = ({ children }) => {
         theme === "system" ? (mediaQuery.matches ? "dark" : "light") : theme;
 
       root.classList.remove("light", "dark");
-
       root.classList.add(resolvedTheme);
     };
 

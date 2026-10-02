@@ -152,7 +152,7 @@ const worker = new Worker(
     );
 
     /*
-     * Store NeuAspire's selected logical model.
+     * Store GenioCore's selected logical model.
      *
      * At completion execution.model will be replaced
      * with the actual provider model(s) used.
@@ -908,4 +908,4 @@ process.on("SIGTERM", () => shutdown("SIGTERM"));
 
 process.on("SIGINT", () => shutdown("SIGINT"));
 
-console.log("NeuAspire review worker started");
+console.log("GenioCore review worker started");

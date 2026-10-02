@@ -18,7 +18,7 @@ const executeReview = async ({ model, review, input }) => {
 
   /*
    * Provider output cannot enter our DB
-   * without passing NeuAspire's schema.
+   * without passing geniocore's schema.
    */
   const parsedOutput = reviewOutputSchema.safeParse(result.output);
 

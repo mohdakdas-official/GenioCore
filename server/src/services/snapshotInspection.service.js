@@ -13,7 +13,7 @@ import ApiError from "../utils/ApiError.js";
 const MAX_ARCHIVE_ENTRIES = 100_000;
 
 /*
- * Limits for files NeuAspire will actually analyze.
+ * Limits for files GenioCore will actually analyze.
  */
 const MAX_SOURCE_FILES = 5_000;
 

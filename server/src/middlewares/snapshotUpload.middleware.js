@@ -8,7 +8,7 @@ import ApiError from "../utils/ApiError.js";
 
 const MAX_ZIP_SIZE = 250 * 1024 * 1024; // 250 MB
 
-const uploadDirectory = path.join(os.tmpdir(), "neuaspire-snapshots");
+const uploadDirectory = path.join(os.tmpdir(), "geniocore-snapshots");
 
 fs.mkdirSync(uploadDirectory, {
   recursive: true,
