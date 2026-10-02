@@ -18,7 +18,7 @@ export const SidebarItem = ({
           isActive
             ? "bg-primary text-primary-foreground font-semibold shadow-sm"
             : "text-text-secondary hover:text-text-primary hover:bg-surface-hover"
-        }`
+        } ${isCollapsed ? "justify-center" : ""}`
       }
     >
       {({ isActive }) => (
@@ -28,7 +28,7 @@ export const SidebarItem = ({
               isActive
                 ? "text-primary-foreground"
                 : "text-muted group-hover:text-text-primary"
-            } ${isCollapsed ? "flex justify-center" : ""}`}
+            } ${isCollapsed ? "flex justify-center" : "flex justify-start"}`}
           />
           {!isCollapsed && (
             <span className="truncate text-[14px]">{label}</span>

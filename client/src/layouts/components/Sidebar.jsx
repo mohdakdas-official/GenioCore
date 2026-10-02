@@ -259,7 +259,7 @@ export const Sidebar = ({
 
                 closeMobile();
               }}
-              className="flex min-w-0 flex-1 items-center gap-2.5 rounded-lg text-left transition-colors hover:bg-surface-hover"
+              className={`${isCollapsed ? "justify-center" : "justify-start"} flex min-w-0 flex-1 items-center gap-2.5 rounded-lg text-left transition-colors hover:bg-surface-hover`}
               title="Open settings"
             >
               <Avatar
