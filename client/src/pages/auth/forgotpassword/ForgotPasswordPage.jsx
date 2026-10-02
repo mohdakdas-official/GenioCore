@@ -22,6 +22,7 @@ import {
 
 import useAuth from "../../../hooks/useAuth";
 import { emailSchema } from "../../../validation/auth.validation";
+import PageMeta from "../../../components/PageMeta";
 
 export default function ForgotPasswordPage() {
   const navigate = useNavigate();
@@ -217,8 +218,13 @@ export default function ForgotPasswordPage() {
   };
 
   return (
-    <div
-      className="
+    <>
+      <PageMeta
+        title="Forgot Password — GenioCore"
+        description="Recover access to your GenioCore account by verifying your email and resetting your password."
+      />
+      <div
+        className="
         relative flex min-h-screen w-full
         items-center justify-center overflow-hidden
         bg-background p-4
@@ -226,245 +232,246 @@ export default function ForgotPasswordPage() {
         selection:bg-primary/30 selection:text-primary
         sm:p-6 lg:p-8
       "
-    >
-      {/* Background Glow */}
-      <div
-        aria-hidden="true"
-        className="
+      >
+        {/* Background Glow */}
+        <div
+          aria-hidden="true"
+          className="
           pointer-events-none absolute -left-40 -top-40
           h-[500px] w-[500px]
           rounded-full bg-primary/10 blur-[130px]
         "
-      />
+        />
 
-      <div
-        aria-hidden="true"
-        className="
+        <div
+          aria-hidden="true"
+          className="
           pointer-events-none absolute -bottom-40 -right-40
           h-[500px] w-[500px]
           rounded-full bg-info/10 blur-[150px]
         "
-      />
+        />
 
-      {/* Main Card */}
-      <div
-        className="
+        {/* Main Card */}
+        <div
+          className="
           relative z-10 grid min-h-160 w-full
           max-w-5xl grid-cols-1 overflow-hidden
           rounded-2xl border border-border
           bg-card/90 shadow-2xl backdrop-blur-xl
           lg:grid-cols-12
         "
-      >
-        {/* Left Section */}
-        <div className="relative flex flex-col justify-between overflow-hidden border-b border-border bg-surface p-8 lg:col-span-6 lg:border-b-0 lg:border-r lg:p-12">
-          {/* Grid */}
+        >
+          {/* Left Section */}
+          <div className="relative flex flex-col justify-between overflow-hidden border-b border-border bg-surface p-8 lg:col-span-6 lg:border-b-0 lg:border-r lg:p-12">
+            {/* Grid */}
+            <div
+              aria-hidden="true"
+              className=" pointer-events-none absolute inset-0 bg-[linear-gradient(to_right,var(--border-subtle)_1px,transparent_1px),linear-gradient(to_bottom,var(--border-subtle)_1px,transparent_1px)] bg-[size:24px_24px] opacity-40"
+            />
+
+            {/* Brand */}
+            <div className="relative z-10">
+              <div className=" mb-6 inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/10 px-3 py-1.5 text-xs font-medium text-primary ">
+                <Sparkles className="h-3.5 w-3.5" />
+                <span>GenioCore account recovery</span>
+              </div>
+
+              <h1 className="text-3xl font-bold tracking-tight text-text-primary lg:text-4xl">
+                GenioCore
+              </h1>
+
+              <p className="mt-2 text-base font-medium text-text-secondary">
+                Recover access to your account.
+              </p>
+
+              <p className="mt-1 max-w-lg text-sm leading-relaxed text-muted">
+                Verify your email using a one-time code, then securely create a
+                new password for your account.
+              </p>
+            </div>
+
+            {/* Recovery Preview */}
+            <div className="relative z-10 my-8">
+              <div className=" relative rounded-xl border border-border bg-background/95 p-5 font-mono text-xs text-text-secondary shadow-2xl ">
+                {/* Window Header */}
+                <div className=" mb-4 flex items-center justify-between border-b border-border-subtle pb-3 ">
+                  <div className="flex items-center gap-1.5">
+                    <span className="inline-block h-2.5 w-2.5 rounded-full bg-error/80" />
+                    <span className="inline-block h-2.5 w-2.5 rounded-full bg-warning/80" />
+                    <span className="inline-block h-2.5 w-2.5 rounded-full bg-success/80" />
+                  </div>
+
+                  <div className="flex items-center gap-1.5 text-[11px] text-muted">
+                    <Terminal className="h-3.5 w-3.5 text-primary" />
+                    <span>account-recovery</span>
+                  </div>
+                </div>
+
+                {/* Code */}
+                <div className="space-y-1 leading-relaxed text-muted">
+                  <p>
+                    <span className="text-info">const</span> recovery ={" "}
+                    <span className="text-primary">await</span>{" "}
+                    verifyOtp(email);
+                  </p>
+
+                  <p className="text-text-disabled">
+                    // verify ownership before password reset
+                  </p>
+                </div>
+
+                {/* Recovery Flow */}
+                <div className="mt-5 space-y-2">
+                  <div
+                    className="
+            flex items-center justify-between
+            rounded-lg border border-border-subtle
+            bg-surface/60 px-3 py-2
+          "
+                  >
+                    <span className="flex items-center gap-2 text-text-secondary">
+                      <MailCheck className="h-3.5 w-3.5 text-primary" />
+                      Email Verification
+                    </span>
+
+                    <span className="text-[10px] text-muted">OTP</span>
+                  </div>
+
+                  <div
+                    className="
+            flex items-center justify-between
+            rounded-lg border border-border-subtle
+            bg-surface/60 px-3 py-2
+          "
+                  >
+                    <span className="flex items-center gap-2 text-text-secondary">
+                      <KeyRound className="h-3.5 w-3.5 text-primary" />
+                      One-Time Code
+                    </span>
+
+                    <span className="text-[10px] text-muted">Required</span>
+                  </div>
+
+                  <div
+                    className="
+            flex items-center justify-between
+            rounded-lg border border-border-subtle
+            bg-surface/60 px-3 py-2
+          "
+                  >
+                    <span className="flex items-center gap-2 text-text-secondary">
+                      <LockKeyhole className="h-3.5 w-3.5 text-primary" />
+                      Password Reset
+                    </span>
+
+                    <span className="text-[10px] text-muted">
+                      After verification
+                    </span>
+                  </div>
+                </div>
+
+                {/* Flow */}
+                <div className="mt-5 border-t border-border-subtle pt-4">
+                  <div className="mb-3 text-[10px] uppercase tracking-wider text-muted">
+                    Recovery flow
+                  </div>
+
+                  <div className="flex flex-wrap items-center gap-2 text-[10px]">
+                    <span className="rounded-md border border-border-subtle bg-surface px-2 py-1 text-text-secondary">
+                      Email
+                    </span>
+
+                    <span className="text-muted">→</span>
+
+                    <span className="rounded-md border border-border-subtle bg-surface px-2 py-1 text-text-secondary">
+                      OTP
+                    </span>
+
+                    <span className="text-muted">→</span>
+
+                    <span className="rounded-md border border-primary/20 bg-primary/10 px-2 py-1 text-primary">
+                      New Password
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Footer */}
+            <div className="relative z-10 flex flex-wrap items-center gap-x-5 gap-y-2 text-xs text-muted">
+              <span className="flex items-center gap-1.5">
+                <CheckCircle2 className="h-3.5 w-3.5 text-primary" />
+                Email verification
+              </span>
+
+              <span className="flex items-center gap-1.5">
+                <CheckCircle2 className="h-3.5 w-3.5 text-primary" />
+                One-time passcode
+              </span>
+            </div>
+          </div>
+
+          {/* Right Section */}
           <div
-            aria-hidden="true"
-            className=" pointer-events-none absolute inset-0 bg-[linear-gradient(to_right,var(--border-subtle)_1px,transparent_1px),linear-gradient(to_bottom,var(--border-subtle)_1px,transparent_1px)] bg-[size:24px_24px] opacity-40"
-          />
-
-          {/* Brand */}
-          <div className="relative z-10">
-            <div className=" mb-6 inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/10 px-3 py-1.5 text-xs font-medium text-primary ">
-              <Sparkles className="h-3.5 w-3.5" />
-              <span>GenioCore account recovery</span>
-            </div>
-
-            <h1 className="text-3xl font-bold tracking-tight text-text-primary lg:text-4xl">
-              GenioCore
-            </h1>
-
-            <p className="mt-2 text-base font-medium text-text-secondary">
-              Recover access to your account.
-            </p>
-
-            <p className="mt-1 max-w-lg text-sm leading-relaxed text-muted">
-              Verify your email using a one-time code, then securely create a
-              new password for your account.
-            </p>
-          </div>
-
-          {/* Recovery Preview */}
-          <div className="relative z-10 my-8">
-            <div className=" relative rounded-xl border border-border bg-background/95 p-5 font-mono text-xs text-text-secondary shadow-2xl ">
-              {/* Window Header */}
-              <div className=" mb-4 flex items-center justify-between border-b border-border-subtle pb-3 ">
-                <div className="flex items-center gap-1.5">
-                  <span className="inline-block h-2.5 w-2.5 rounded-full bg-error/80" />
-                  <span className="inline-block h-2.5 w-2.5 rounded-full bg-warning/80" />
-                  <span className="inline-block h-2.5 w-2.5 rounded-full bg-success/80" />
-                </div>
-
-                <div className="flex items-center gap-1.5 text-[11px] text-muted">
-                  <Terminal className="h-3.5 w-3.5 text-primary" />
-                  <span>account-recovery</span>
-                </div>
-              </div>
-
-              {/* Code */}
-              <div className="space-y-1 leading-relaxed text-muted">
-                <p>
-                  <span className="text-info">const</span> recovery ={" "}
-                  <span className="text-primary">await</span> verifyOtp(email);
-                </p>
-
-                <p className="text-text-disabled">
-                  // verify ownership before password reset
-                </p>
-              </div>
-
-              {/* Recovery Flow */}
-              <div className="mt-5 space-y-2">
-                <div
-                  className="
-            flex items-center justify-between
-            rounded-lg border border-border-subtle
-            bg-surface/60 px-3 py-2
-          "
-                >
-                  <span className="flex items-center gap-2 text-text-secondary">
-                    <MailCheck className="h-3.5 w-3.5 text-primary" />
-                    Email Verification
-                  </span>
-
-                  <span className="text-[10px] text-muted">OTP</span>
-                </div>
-
-                <div
-                  className="
-            flex items-center justify-between
-            rounded-lg border border-border-subtle
-            bg-surface/60 px-3 py-2
-          "
-                >
-                  <span className="flex items-center gap-2 text-text-secondary">
-                    <KeyRound className="h-3.5 w-3.5 text-primary" />
-                    One-Time Code
-                  </span>
-
-                  <span className="text-[10px] text-muted">Required</span>
-                </div>
-
-                <div
-                  className="
-            flex items-center justify-between
-            rounded-lg border border-border-subtle
-            bg-surface/60 px-3 py-2
-          "
-                >
-                  <span className="flex items-center gap-2 text-text-secondary">
-                    <LockKeyhole className="h-3.5 w-3.5 text-primary" />
-                    Password Reset
-                  </span>
-
-                  <span className="text-[10px] text-muted">
-                    After verification
-                  </span>
-                </div>
-              </div>
-
-              {/* Flow */}
-              <div className="mt-5 border-t border-border-subtle pt-4">
-                <div className="mb-3 text-[10px] uppercase tracking-wider text-muted">
-                  Recovery flow
-                </div>
-
-                <div className="flex flex-wrap items-center gap-2 text-[10px]">
-                  <span className="rounded-md border border-border-subtle bg-surface px-2 py-1 text-text-secondary">
-                    Email
-                  </span>
-
-                  <span className="text-muted">→</span>
-
-                  <span className="rounded-md border border-border-subtle bg-surface px-2 py-1 text-text-secondary">
-                    OTP
-                  </span>
-
-                  <span className="text-muted">→</span>
-
-                  <span className="rounded-md border border-primary/20 bg-primary/10 px-2 py-1 text-primary">
-                    New Password
-                  </span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Footer */}
-          <div className="relative z-10 flex flex-wrap items-center gap-x-5 gap-y-2 text-xs text-muted">
-            <span className="flex items-center gap-1.5">
-              <CheckCircle2 className="h-3.5 w-3.5 text-primary" />
-              Email verification
-            </span>
-
-            <span className="flex items-center gap-1.5">
-              <CheckCircle2 className="h-3.5 w-3.5 text-primary" />
-              One-time passcode
-            </span>
-          </div>
-        </div>
-
-        {/* Right Section */}
-        <div
-          className="
+            className="
             flex flex-col justify-center
             bg-card p-8
             lg:col-span-6 lg:p-12
           "
-        >
-          <div className="mx-auto w-full max-w-md">
-            {step === "email" ? (
-              <div>
-                <div className="mb-6">
-                  <h2
-                    className="
+          >
+            <div className="mx-auto w-full max-w-md">
+              {step === "email" ? (
+                <div>
+                  <div className="mb-6">
+                    <h2
+                      className="
                       text-2xl font-bold
                       tracking-tight
                       text-text-primary
                     "
+                    >
+                      Forgot your password?
+                    </h2>
+
+                    <p className="mt-1 text-sm text-muted">
+                      Enter your email address and we'll send you a 6-digit
+                      verification code.
+                    </p>
+                  </div>
+
+                  <form
+                    onSubmit={handleSubmit(onEmailSubmit)}
+                    className="space-y-4"
                   >
-                    Forgot your password?
-                  </h2>
-
-                  <p className="mt-1 text-sm text-muted">
-                    Enter your email address and we'll send you a 6-digit
-                    verification code.
-                  </p>
-                </div>
-
-                <form
-                  onSubmit={handleSubmit(onEmailSubmit)}
-                  className="space-y-4"
-                >
-                  {/* Email */}
-                  <div>
-                    <label
-                      className="
+                    {/* Email */}
+                    <div>
+                      <label
+                        className="
                         mb-1.5 block text-xs
                         font-medium
                         text-text-secondary
                       "
-                    >
-                      Work Email
-                    </label>
+                      >
+                        Work Email
+                      </label>
 
-                    <div className="relative">
-                      <Mail
-                        className="
+                      <div className="relative">
+                        <Mail
+                          className="
                           pointer-events-none absolute
                           left-3.5 top-1/2
                           h-4 w-4
                           -translate-y-1/2
                           text-muted
                         "
-                      />
+                        />
 
-                      <input
-                        type="email"
-                        {...register("email")}
-                        placeholder="you@example.com"
-                        className={`
+                        <input
+                          type="email"
+                          {...register("email")}
+                          placeholder="you@example.com"
+                          className={`
                           w-full rounded-xl
                           border bg-surface
                           py-2.5 pl-10 pr-4
@@ -480,26 +487,26 @@ export default function ForgotPasswordPage() {
                               : "border-border focus:border-primary focus:ring-primary/30"
                           }
                         `}
-                      />
-                    </div>
+                        />
+                      </div>
 
-                    {errors.email && (
-                      <p
-                        className="
+                      {errors.email && (
+                        <p
+                          className="
                           mt-1.5 text-xs
                           text-error
                         "
-                      >
-                        {errors.email.message}
-                      </p>
-                    )}
-                  </div>
+                        >
+                          {errors.email.message}
+                        </p>
+                      )}
+                    </div>
 
-                  {/* Button */}
-                  <button
-                    type="submit"
-                    disabled={isForgotPasswordOTPLoading}
-                    className="
+                    {/* Button */}
+                    <button
+                      type="submit"
+                      disabled={isForgotPasswordOTPLoading}
+                      className="
                       mt-2 flex w-full
                       cursor-pointer
                       items-center justify-center
@@ -514,31 +521,31 @@ export default function ForgotPasswordPage() {
                       disabled:cursor-not-allowed
                       disabled:opacity-50
                     "
-                  >
-                    {isForgotPasswordOTPLoading ? (
-                      <>
-                        <Loader2 className="h-4 w-4 animate-spin" />
-                        <span>Sending OTP...</span>
-                      </>
-                    ) : (
-                      <>
-                        <span>Send OTP</span>
-                        <ArrowRight className="h-4 w-4" />
-                      </>
-                    )}
-                  </button>
-                </form>
+                    >
+                      {isForgotPasswordOTPLoading ? (
+                        <>
+                          <Loader2 className="h-4 w-4 animate-spin" />
+                          <span>Sending OTP...</span>
+                        </>
+                      ) : (
+                        <>
+                          <span>Send OTP</span>
+                          <ArrowRight className="h-4 w-4" />
+                        </>
+                      )}
+                    </button>
+                  </form>
 
-                <div
-                  className="
+                  <div
+                    className="
                     mt-8 border-t
                     border-border-subtle
                     pt-6 text-center
                   "
-                >
-                  <Link
-                    to="/v1/auth/login"
-                    className="
+                  >
+                    <Link
+                      to="/v1/auth/login"
+                      className="
                       group inline-flex
                       items-center gap-2
                       text-xs font-medium
@@ -546,61 +553,61 @@ export default function ForgotPasswordPage() {
                       transition-colors
                       hover:text-text-primary
                     "
-                  >
-                    <ArrowLeft
-                      className="
+                    >
+                      <ArrowLeft
+                        className="
                         h-3.5 w-3.5
                         transition-transform
                         group-hover:-translate-x-1
                       "
-                    />
+                      />
 
-                    <span>Back to Sign In</span>
-                  </Link>
+                      <span>Back to Sign In</span>
+                    </Link>
+                  </div>
                 </div>
-              </div>
-            ) : (
-              <div>
-                <div className="mb-6">
-                  <h2
-                    className="
+              ) : (
+                <div>
+                  <div className="mb-6">
+                    <h2
+                      className="
                       text-2xl font-bold
                       tracking-tight
                       text-text-primary
                     "
-                  >
-                    Verify your email
-                  </h2>
+                    >
+                      Verify your email
+                    </h2>
 
-                  <p className="mt-1 text-sm text-muted">
-                    We've sent a 6-digit verification code to your email
-                    address.
-                  </p>
-                </div>
+                    <p className="mt-1 text-sm text-muted">
+                      We've sent a 6-digit verification code to your email
+                      address.
+                    </p>
+                  </div>
 
-                <form onSubmit={onOtpVerify} className="space-y-4">
-                  <div
-                    className="
+                  <form onSubmit={onOtpVerify} className="space-y-4">
+                    <div
+                      className="
                       flex items-center justify-between
                       pb-1 text-xs
                     "
-                  >
-                    <span className="text-text-secondary">
-                      Code sent to{" "}
-                      <span
-                        className="
+                    >
+                      <span className="text-text-secondary">
+                        Code sent to{" "}
+                        <span
+                          className="
                           font-medium
                           text-text-primary
                         "
-                      >
-                        {getMaskedEmail(targetEmail)}
+                        >
+                          {getMaskedEmail(targetEmail)}
+                        </span>
                       </span>
-                    </span>
 
-                    <button
-                      type="button"
-                      onClick={handleChangeEmail}
-                      className="
+                      <button
+                        type="button"
+                        onClick={handleChangeEmail}
+                        className="
                         flex cursor-pointer
                         items-center gap-1
                         font-medium
@@ -609,34 +616,34 @@ export default function ForgotPasswordPage() {
                         hover:text-primary-hover
                         hover:underline
                       "
-                    >
-                      <Edit3 className="h-3 w-3" />
-                      Change email
-                    </button>
-                  </div>
+                      >
+                        <Edit3 className="h-3 w-3" />
+                        Change email
+                      </button>
+                    </div>
 
-                  {/* OTP */}
-                  <div
-                    className="
+                    {/* OTP */}
+                    <div
+                      className="
                       flex justify-between gap-2
                     "
-                    onPaste={handleOtpPaste}
-                  >
-                    {otpValues.map((value, index) => (
-                      <input
-                        key={index}
-                        ref={(element) => {
-                          otpInputRefs.current[index] = element;
-                        }}
-                        type="text"
-                        maxLength={1}
-                        inputMode="numeric"
-                        value={value}
-                        onChange={(event) =>
-                          handleOtpChange(index, event.target.value)
-                        }
-                        onKeyDown={(event) => handleOtpKeyDown(index, event)}
-                        className={`
+                      onPaste={handleOtpPaste}
+                    >
+                      {otpValues.map((value, index) => (
+                        <input
+                          key={index}
+                          ref={(element) => {
+                            otpInputRefs.current[index] = element;
+                          }}
+                          type="text"
+                          maxLength={1}
+                          inputMode="numeric"
+                          value={value}
+                          onChange={(event) =>
+                            handleOtpChange(index, event.target.value)
+                          }
+                          onKeyDown={(event) => handleOtpKeyDown(index, event)}
+                          className={`
                           h-12 w-12
                           rounded-xl border
                           bg-surface
@@ -652,50 +659,50 @@ export default function ForgotPasswordPage() {
                               : "border-border focus:border-primary focus:ring-primary/30"
                           }
                         `}
-                      />
-                    ))}
-                  </div>
+                        />
+                      ))}
+                    </div>
 
-                  {otpError && (
-                    <p className="text-left text-xs text-error">{otpError}</p>
-                  )}
+                    {otpError && (
+                      <p className="text-left text-xs text-error">{otpError}</p>
+                    )}
 
-                  {resendSuccessMsg && !otpError && (
-                    <p
-                      className="
+                    {resendSuccessMsg && !otpError && (
+                      <p
+                        className="
                         flex items-center gap-1
                         text-xs text-success
                       "
-                    >
-                      <MailCheck className="h-3.5 w-3.5" />
+                      >
+                        <MailCheck className="h-3.5 w-3.5" />
 
-                      {resendSuccessMsg}
-                    </p>
-                  )}
+                        {resendSuccessMsg}
+                      </p>
+                    )}
 
-                  {/* Resend */}
-                  <div
-                    className="
+                    {/* Resend */}
+                    <div
+                      className="
                       flex items-center justify-between
                       pt-1 text-xs text-muted
                     "
-                  >
-                    <span>Didn't receive the code?</span>
+                    >
+                      <span>Didn't receive the code?</span>
 
-                    {isCountingDown ? (
-                      <span
-                        className="
+                      {isCountingDown ? (
+                        <span
+                          className="
                           font-mono text-muted
                         "
-                      >
-                        Resend in {countdown}s
-                      </span>
-                    ) : (
-                      <button
-                        type="button"
-                        onClick={handleResendOtp}
-                        disabled={isForgotPasswordOTPLoading}
-                        className="
+                        >
+                          Resend in {countdown}s
+                        </span>
+                      ) : (
+                        <button
+                          type="button"
+                          onClick={handleResendOtp}
+                          disabled={isForgotPasswordOTPLoading}
+                          className="
                           flex cursor-pointer
                           items-center gap-1
                           font-medium
@@ -704,18 +711,18 @@ export default function ForgotPasswordPage() {
                           disabled:cursor-not-allowed
                           disabled:opacity-50
                         "
-                      >
-                        <RefreshCw className="h-3 w-3" />
-                        Resend OTP
-                      </button>
-                    )}
-                  </div>
+                        >
+                          <RefreshCw className="h-3 w-3" />
+                          Resend OTP
+                        </button>
+                      )}
+                    </div>
 
-                  {/* Verify */}
-                  <button
-                    type="submit"
-                    disabled={isVerifyForgotPasswordOTPLoading}
-                    className="
+                    {/* Verify */}
+                    <button
+                      type="submit"
+                      disabled={isVerifyForgotPasswordOTPLoading}
+                      className="
                       mt-2 flex w-full
                       cursor-pointer
                       items-center justify-center
@@ -730,32 +737,32 @@ export default function ForgotPasswordPage() {
                       disabled:cursor-not-allowed
                       disabled:opacity-50
                     "
-                  >
-                    {isVerifyForgotPasswordOTPLoading ? (
-                      <>
-                        <Loader2 className="h-4 w-4 animate-spin" />
-                        <span>Verifying...</span>
-                      </>
-                    ) : (
-                      <>
-                        <span>Verify OTP</span>
-                        <ArrowRight className="h-4 w-4" />
-                      </>
-                    )}
-                  </button>
-                </form>
+                    >
+                      {isVerifyForgotPasswordOTPLoading ? (
+                        <>
+                          <Loader2 className="h-4 w-4 animate-spin" />
+                          <span>Verifying...</span>
+                        </>
+                      ) : (
+                        <>
+                          <span>Verify OTP</span>
+                          <ArrowRight className="h-4 w-4" />
+                        </>
+                      )}
+                    </button>
+                  </form>
 
-                <div
-                  className="
+                  <div
+                    className="
                     mt-8 border-t
                     border-border-subtle
                     pt-6 text-center
                   "
-                >
-                  <button
-                    type="button"
-                    onClick={handleChangeEmail}
-                    className="
+                  >
+                    <button
+                      type="button"
+                      onClick={handleChangeEmail}
+                      className="
                       group inline-flex
                       cursor-pointer
                       items-center gap-2
@@ -764,23 +771,24 @@ export default function ForgotPasswordPage() {
                       transition-colors
                       hover:text-text-primary
                     "
-                  >
-                    <ArrowLeft
-                      className="
+                    >
+                      <ArrowLeft
+                        className="
                         h-3.5 w-3.5
                         transition-transform
                         group-hover:-translate-x-1
                       "
-                    />
+                      />
 
-                    <span>Change email address</span>
-                  </button>
+                      <span>Change email address</span>
+                    </button>
+                  </div>
                 </div>
-              </div>
-            )}
+              )}
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }

@@ -19,6 +19,7 @@ import {
 import { Card, CardHeader } from "../../components/ui/Card";
 
 import { Button } from "../../components/ui/Button";
+import PageMeta from "../../components/PageMeta";
 
 const helpTopics = [
   {
@@ -190,214 +191,221 @@ const HelpPage = () => {
   };
 
   return (
-    <div className="max-w-full space-y-6">
-      {/* Header */}
-      <div className="border-b border-border-subtle pb-2">
-        <div className="flex items-center gap-2">
-          <CircleHelp className="h-5 w-5 text-primary" />
+    <>
+      <PageMeta
+        title="Help & Support — GenioCore"
+        description="Find guidance, troubleshooting information, and support resources for using GenioCore."
+      />
+      <div className="max-w-full space-y-6">
+        {/* Header */}
+        <div className="border-b border-border-subtle pb-2">
+          <div className="flex items-center gap-2">
+            <CircleHelp className="h-5 w-5 text-primary" />
 
-          <h2 className="text-lg font-bold tracking-tight text-text-primary">
-            Help & Documentation
-          </h2>
+            <h2 className="text-lg font-bold tracking-tight text-text-primary">
+              Help & Documentation
+            </h2>
+          </div>
+
+          <p className="mt-1 text-xs text-muted">
+            Learn how projects, reviews, notifications, and account settings
+            work.
+          </p>
         </div>
 
-        <p className="mt-1 text-xs text-muted">
-          Learn how projects, reviews, notifications, and account settings work.
-        </p>
-      </div>
+        {/* Search */}
+        <div className="relative">
+          <Search className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted" />
 
-      {/* Search */}
-      <div className="relative">
-        <Search className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted" />
+          <input
+            type="text"
+            value={searchTerm}
+            onChange={(event) => setSearchTerm(event.target.value)}
+            placeholder="Search projects, reviews, reports, username, password..."
+            className="h-11 w-full rounded-xl border border-border-subtle bg-card pl-10 pr-10 text-xs text-text-primary shadow-xs placeholder:text-muted focus:border-primary focus:outline-none"
+          />
 
-        <input
-          type="text"
-          value={searchTerm}
-          onChange={(event) => setSearchTerm(event.target.value)}
-          placeholder="Search projects, reviews, reports, username, password..."
-          className="h-11 w-full rounded-xl border border-border-subtle bg-card pl-10 pr-10 text-xs text-text-primary shadow-xs placeholder:text-muted focus:border-primary focus:outline-none"
-        />
-
-        {searchTerm && (
-          <button
-            type="button"
-            onClick={clearSearch}
-            title="Clear search"
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-muted transition-colors hover:text-text-primary"
-          >
-            <XCircle className="h-4 w-4" />
-          </button>
-        )}
-      </div>
-
-      {/* Help Topics */}
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-        {helpTopics.map((topic) => {
-          const Icon = topic.icon;
-
-          return (
+          {searchTerm && (
             <button
-              key={topic.id}
               type="button"
-              onClick={() => handleTopicClick(topic)}
-              className="text-left"
+              onClick={clearSearch}
+              title="Clear search"
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-muted transition-colors hover:text-text-primary"
             >
-              <Card hover className="h-full cursor-pointer space-y-2 group">
-                <Icon className="h-5 w-5 text-primary" />
-
-                <h4 className="text-xs font-semibold text-text-primary transition-colors group-hover:text-primary">
-                  {topic.title}
-                </h4>
-
-                <p className="text-[11px] leading-relaxed text-muted">
-                  {topic.description}
-                </p>
-              </Card>
+              <XCircle className="h-4 w-4" />
             </button>
-          );
-        })}
-      </div>
+          )}
+        </div>
 
-      {/* FAQ */}
-      <Card className="space-y-4">
-        <CardHeader
-          title="Frequently Asked Questions"
-          subtitle={
-            searchTerm
-              ? `${filteredFaqs.length} result${
-                  filteredFaqs.length === 1 ? "" : "s"
-                } found`
-              : "Common questions about the current platform"
-          }
-        />
+        {/* Help Topics */}
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+          {helpTopics.map((topic) => {
+            const Icon = topic.icon;
 
-        {filteredFaqs.length === 0 ? (
-          <div className="rounded-lg border border-border-subtle bg-surface px-4 py-10 text-center">
-            <Search className="mx-auto h-6 w-6 text-muted opacity-50" />
+            return (
+              <button
+                key={topic.id}
+                type="button"
+                onClick={() => handleTopicClick(topic)}
+                className="text-left"
+              >
+                <Card hover className="h-full cursor-pointer space-y-2 group">
+                  <Icon className="h-5 w-5 text-primary" />
 
-            <p className="mt-2 text-xs font-medium text-text-primary">
-              No help topics found
+                  <h4 className="text-xs font-semibold text-text-primary transition-colors group-hover:text-primary">
+                    {topic.title}
+                  </h4>
+
+                  <p className="text-[11px] leading-relaxed text-muted">
+                    {topic.description}
+                  </p>
+                </Card>
+              </button>
+            );
+          })}
+        </div>
+
+        {/* FAQ */}
+        <Card className="space-y-4">
+          <CardHeader
+            title="Frequently Asked Questions"
+            subtitle={
+              searchTerm
+                ? `${filteredFaqs.length} result${
+                    filteredFaqs.length === 1 ? "" : "s"
+                  } found`
+                : "Common questions about the current platform"
+            }
+          />
+
+          {filteredFaqs.length === 0 ? (
+            <div className="rounded-lg border border-border-subtle bg-surface px-4 py-10 text-center">
+              <Search className="mx-auto h-6 w-6 text-muted opacity-50" />
+
+              <p className="mt-2 text-xs font-medium text-text-primary">
+                No help topics found
+              </p>
+
+              <p className="mt-1 text-[11px] text-muted">
+                Try another search term or view all questions.
+              </p>
+
+              <Button
+                type="button"
+                size="sm"
+                variant="secondary"
+                className="mt-4"
+                onClick={clearSearch}
+              >
+                View All Questions
+              </Button>
+            </div>
+          ) : (
+            <div className="space-y-2.5">
+              {filteredFaqs.map((faq) => {
+                const isOpen = expandedFaqId === faq.id;
+
+                return (
+                  <div
+                    key={faq.id}
+                    className="overflow-hidden rounded-lg border border-border-subtle bg-surface transition-colors"
+                  >
+                    <button
+                      type="button"
+                      onClick={() => setExpandedFaqId(isOpen ? null : faq.id)}
+                      className="flex w-full items-center justify-between gap-3 p-3.5 text-left hover:bg-surface-hover/50"
+                    >
+                      <div className="min-w-0">
+                        <span className="text-xs font-medium text-text-primary">
+                          {faq.q}
+                        </span>
+
+                        <span className="mt-1 block font-mono text-[9px] uppercase tracking-wide text-text-disabled">
+                          {faq.category}
+                        </span>
+                      </div>
+
+                      {isOpen ? (
+                        <ChevronDown className="h-4 w-4 shrink-0 text-muted" />
+                      ) : (
+                        <ChevronRight className="h-4 w-4 shrink-0 text-muted" />
+                      )}
+                    </button>
+
+                    {isOpen && (
+                      <div className="border-t border-border-subtle/50 px-3.5 pb-3.5 pt-3 text-xs leading-relaxed text-muted">
+                        {faq.a}
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </Card>
+
+        {/* Useful Information */}
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <Card className="space-y-3">
+            <div className="flex items-center gap-2">
+              <ShieldCheck className="h-4 w-4 text-success" />
+
+              <h4 className="text-xs font-semibold text-text-primary">
+                Review Findings
+              </h4>
+            </div>
+
+            <p className="text-[11px] leading-relaxed text-muted">
+              Completed reviews can contain findings grouped by severity,
+              including critical, high, medium, low, and informational issues.
             </p>
+          </Card>
+
+          <Card className="space-y-3">
+            <div className="flex items-center gap-2">
+              <Bell className="h-4 w-4 text-primary" />
+
+              <h4 className="text-xs font-semibold text-text-primary">
+                Notifications
+              </h4>
+            </div>
+
+            <p className="text-[11px] leading-relaxed text-muted">
+              Review completion, permanent failures, and important security
+              findings can appear in the Notification Center.
+            </p>
+          </Card>
+        </div>
+
+        {/* Troubleshooting */}
+        <Card className="flex flex-col items-start justify-between gap-4 border-border-subtle p-5 sm:flex-row sm:items-center">
+          <div>
+            <div className="flex items-center gap-2">
+              <RefreshCw className="h-4 w-4 text-warning" />
+
+              <h4 className="text-xs font-semibold text-text-primary">
+                Review failed?
+              </h4>
+            </div>
 
             <p className="mt-1 text-[11px] text-muted">
-              Try another search term or view all questions.
+              Check common causes such as provider errors, quota limits, and
+              retry behavior.
             </p>
-
-            <Button
-              type="button"
-              size="sm"
-              variant="secondary"
-              className="mt-4"
-              onClick={clearSearch}
-            >
-              View All Questions
-            </Button>
-          </div>
-        ) : (
-          <div className="space-y-2.5">
-            {filteredFaqs.map((faq) => {
-              const isOpen = expandedFaqId === faq.id;
-
-              return (
-                <div
-                  key={faq.id}
-                  className="overflow-hidden rounded-lg border border-border-subtle bg-surface transition-colors"
-                >
-                  <button
-                    type="button"
-                    onClick={() => setExpandedFaqId(isOpen ? null : faq.id)}
-                    className="flex w-full items-center justify-between gap-3 p-3.5 text-left hover:bg-surface-hover/50"
-                  >
-                    <div className="min-w-0">
-                      <span className="text-xs font-medium text-text-primary">
-                        {faq.q}
-                      </span>
-
-                      <span className="mt-1 block font-mono text-[9px] uppercase tracking-wide text-text-disabled">
-                        {faq.category}
-                      </span>
-                    </div>
-
-                    {isOpen ? (
-                      <ChevronDown className="h-4 w-4 shrink-0 text-muted" />
-                    ) : (
-                      <ChevronRight className="h-4 w-4 shrink-0 text-muted" />
-                    )}
-                  </button>
-
-                  {isOpen && (
-                    <div className="border-t border-border-subtle/50 px-3.5 pb-3.5 pt-3 text-xs leading-relaxed text-muted">
-                      {faq.a}
-                    </div>
-                  )}
-                </div>
-              );
-            })}
-          </div>
-        )}
-      </Card>
-
-      {/* Useful Information */}
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-        <Card className="space-y-3">
-          <div className="flex items-center gap-2">
-            <ShieldCheck className="h-4 w-4 text-success" />
-
-            <h4 className="text-xs font-semibold text-text-primary">
-              Review Findings
-            </h4>
           </div>
 
-          <p className="text-[11px] leading-relaxed text-muted">
-            Completed reviews can contain findings grouped by severity,
-            including critical, high, medium, low, and informational issues.
-          </p>
-        </Card>
-
-        <Card className="space-y-3">
-          <div className="flex items-center gap-2">
-            <Bell className="h-4 w-4 text-primary" />
-
-            <h4 className="text-xs font-semibold text-text-primary">
-              Notifications
-            </h4>
-          </div>
-
-          <p className="text-[11px] leading-relaxed text-muted">
-            Review completion, permanent failures, and important security
-            findings can appear in the Notification Center.
-          </p>
+          <Button
+            type="button"
+            size="sm"
+            variant="secondary"
+            icon={RefreshCw}
+            onClick={handleTroubleshooting}
+          >
+            View Troubleshooting
+          </Button>
         </Card>
       </div>
-
-      {/* Troubleshooting */}
-      <Card className="flex flex-col items-start justify-between gap-4 border-border-subtle p-5 sm:flex-row sm:items-center">
-        <div>
-          <div className="flex items-center gap-2">
-            <RefreshCw className="h-4 w-4 text-warning" />
-
-            <h4 className="text-xs font-semibold text-text-primary">
-              Review failed?
-            </h4>
-          </div>
-
-          <p className="mt-1 text-[11px] text-muted">
-            Check common causes such as provider errors, quota limits, and retry
-            behavior.
-          </p>
-        </div>
-
-        <Button
-          type="button"
-          size="sm"
-          variant="secondary"
-          icon={RefreshCw}
-          onClick={handleTroubleshooting}
-        >
-          View Troubleshooting
-        </Button>
-      </Card>
-    </div>
+    </>
   );
 };
 

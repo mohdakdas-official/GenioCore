@@ -38,6 +38,7 @@ import { DonutChart } from "../../components/charts/DonutChart";
 import { getReviewById, getReviewIssues } from "../../services/review.service";
 
 import { getProjectById } from "../../services/project.service";
+import PageMeta from "../../components/PageMeta";
 
 const ReviewReportPage = () => {
   const { projectId, reviewId } = useParams();
@@ -484,492 +485,503 @@ const ReviewReportPage = () => {
   ];
 
   return (
-    <div className="space-y-6">
-      {/* ------------------------------------
+    <>
+      <PageMeta
+        title="Review Report — GenioCore"
+        description="View your GenioCore code review report, including identified security, performance, and maintainability issues."
+      />
+      <div className="space-y-6">
+        {/* ------------------------------------
           HEADER
       ------------------------------------- */}
 
-      <div className="flex flex-col gap-4 border-b border-border-subtle pb-2 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex items-center gap-3">
+        <div className="flex flex-col gap-4 border-b border-border-subtle pb-2 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex items-center gap-3">
+            <Button
+              size="sm"
+              variant="ghost"
+              icon={ArrowLeft}
+              onClick={() => navigate("/v1/reviews")}
+            />
+
+            <div>
+              <div className="flex flex-wrap items-center gap-2">
+                <h2 className="font-mono text-lg font-bold tracking-tight text-text-primary">
+                  Report #{reviewId}
+                </h2>
+
+                <StatusBadge status={formatStatus(review.status)} />
+              </div>
+
+              <p className="mt-1 text-xs text-muted">
+                {project?.name ?? "Project"}
+
+                {providerLabel ? ` • ${providerLabel}` : ""}
+              </p>
+            </div>
+          </div>
+
           <Button
             size="sm"
-            variant="ghost"
-            icon={ArrowLeft}
-            onClick={() => navigate("/v1/reviews")}
-          />
-
-          <div>
-            <div className="flex flex-wrap items-center gap-2">
-              <h2 className="font-mono text-lg font-bold tracking-tight text-text-primary">
-                Report #{reviewId}
-              </h2>
-
-              <StatusBadge status={formatStatus(review.status)} />
-            </div>
-
-            <p className="mt-1 text-xs text-muted">
-              {project?.name ?? "Project"}
-
-              {providerLabel ? ` • ${providerLabel}` : ""}
-            </p>
-          </div>
+            variant="secondary"
+            icon={Download}
+            onClick={handleExportJson}
+          >
+            Export JSON
+          </Button>
         </div>
 
-        <Button
-          size="sm"
-          variant="secondary"
-          icon={Download}
-          onClick={handleExportJson}
-        >
-          Export JSON
-        </Button>
-      </div>
-
-      {/* ------------------------------------
+        {/* ------------------------------------
           SCORES
       ------------------------------------- */}
 
-      <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
-        <StatCard
-          title="Overall Quality Score"
-          value={
-            typeof scores.overall === "number" ? `${scores.overall}/100` : "—"
-          }
-          subtitle={`${issueCounts.total ?? 0} findings`}
-          icon={CheckCircle}
-        />
+        <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+          <StatCard
+            title="Overall Quality Score"
+            value={
+              typeof scores.overall === "number" ? `${scores.overall}/100` : "—"
+            }
+            subtitle={`${issueCounts.total ?? 0} findings`}
+            icon={CheckCircle}
+          />
 
-        <StatCard
-          title="Security Score"
-          value={
-            typeof scores.security === "number" ? `${scores.security}/100` : "—"
-          }
-          subtitle={`${issueCounts.critical ?? 0} critical • ${
-            issueCounts.high ?? 0
-          } high`}
-          icon={Shield}
-        />
+          <StatCard
+            title="Security Score"
+            value={
+              typeof scores.security === "number"
+                ? `${scores.security}/100`
+                : "—"
+            }
+            subtitle={`${issueCounts.critical ?? 0} critical • ${
+              issueCounts.high ?? 0
+            } high`}
+            icon={Shield}
+          />
 
-        <StatCard
-          title="Performance"
-          value={
-            typeof scores.performance === "number"
-              ? `${scores.performance}/100`
-              : "—"
-          }
-          subtitle="AI review score"
-          icon={Zap}
-        />
+          <StatCard
+            title="Performance"
+            value={
+              typeof scores.performance === "number"
+                ? `${scores.performance}/100`
+                : "—"
+            }
+            subtitle="AI review score"
+            icon={Zap}
+          />
 
-        <StatCard
-          title="Maintainability"
-          value={
-            typeof scores.maintainability === "number"
-              ? `${scores.maintainability}/100`
-              : "—"
-          }
-          subtitle={
-            typeof scores.reliability === "number"
-              ? `Reliability ${scores.reliability}/100`
-              : "Reliability unavailable"
-          }
-          icon={Wrench}
-        />
-      </div>
+          <StatCard
+            title="Maintainability"
+            value={
+              typeof scores.maintainability === "number"
+                ? `${scores.maintainability}/100`
+                : "—"
+            }
+            subtitle={
+              typeof scores.reliability === "number"
+                ? `Reliability ${scores.reliability}/100`
+                : "Reliability unavailable"
+            }
+            icon={Wrench}
+          />
+        </div>
 
-      {/* Tabs */}
+        {/* Tabs */}
 
-      <Tabs tabs={tabs} activeTab={activeTab} onChange={setActiveTab} />
+        <Tabs tabs={tabs} activeTab={activeTab} onChange={setActiveTab} />
 
-      {/* ====================================
+        {/* ====================================
           ISSUES TAB
       ===================================== */}
 
-      {activeTab === "issues" && (
-        <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-          <div className="space-y-4 lg:col-span-2">
-            {/* Severity filters */}
+        {activeTab === "issues" && (
+          <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+            <div className="space-y-4 lg:col-span-2">
+              {/* Severity filters */}
 
-            <div className="flex items-center gap-2 overflow-x-auto pb-1">
-              {["ALL", "Critical", "High", "Medium", "Low", "Info"].map(
-                (severity) => (
-                  <button
-                    key={severity}
-                    type="button"
-                    onClick={() => setSeverityFilter(severity)}
-                    className={`rounded px-2.5 py-1 font-mono text-xs font-medium transition-colors ${
-                      severityFilter === severity
-                        ? "border border-border-hover bg-surface-hover text-text-primary"
-                        : "border border-transparent text-muted hover:text-text-secondary"
-                    }`}
-                  >
-                    {severity}
-                  </button>
-                ),
-              )}
-            </div>
-
-            {/* Current file filter */}
-
-            {selectedFileFilter !== "ALL" && (
-              <div className="flex items-center justify-between rounded-lg border border-border-subtle bg-surface px-3 py-2">
-                <span className="truncate font-mono text-[11px] text-muted">
-                  File: {selectedFileFilter}
-                </span>
-
-                <button
-                  type="button"
-                  onClick={() => setSelectedFileFilter("ALL")}
-                  className="text-[11px] font-medium text-primary hover:underline"
-                >
-                  Clear
-                </button>
-              </div>
-            )}
-
-            {/* Finding list */}
-
-            <div className="space-y-3">
-              {filteredIssues.length === 0 ? (
-                <Card className="p-8 text-center">
-                  <CheckCircle className="mx-auto h-7 w-7 text-success" />
-
-                  <h3 className="mt-3 text-xs font-semibold text-text-primary">
-                    No findings match this filter
-                  </h3>
-
-                  <p className="mt-1 text-[11px] text-muted">
-                    Try a different severity or file filter.
-                  </p>
-                </Card>
-              ) : (
-                filteredIssues.map((issue) => {
-                  const isExpanded = expandedIssue === issue._id;
-
-                  const filePath = issue?.location?.filePath ?? "Project-wide";
-
-                  const line = getIssueLineLabel(issue);
-
-                  return (
-                    <Card
-                      key={issue._id}
-                      className="overflow-hidden border-border-subtle p-0"
+              <div className="flex items-center gap-2 overflow-x-auto pb-1">
+                {["ALL", "Critical", "High", "Medium", "Low", "Info"].map(
+                  (severity) => (
+                    <button
+                      key={severity}
+                      type="button"
+                      onClick={() => setSeverityFilter(severity)}
+                      className={`rounded px-2.5 py-1 font-mono text-xs font-medium transition-colors ${
+                        severityFilter === severity
+                          ? "border border-border-hover bg-surface-hover text-text-primary"
+                          : "border border-transparent text-muted hover:text-text-secondary"
+                      }`}
                     >
-                      {/* Header */}
+                      {severity}
+                    </button>
+                  ),
+                )}
+              </div>
 
-                      <div
-                        role="button"
-                        tabIndex={0}
-                        onClick={() =>
-                          setExpandedIssue(isExpanded ? null : issue._id)
-                        }
-                        className="flex cursor-pointer items-start justify-between gap-3 p-4 hover:bg-surface-hover/50"
+              {/* Current file filter */}
+
+              {selectedFileFilter !== "ALL" && (
+                <div className="flex items-center justify-between rounded-lg border border-border-subtle bg-surface px-3 py-2">
+                  <span className="truncate font-mono text-[11px] text-muted">
+                    File: {selectedFileFilter}
+                  </span>
+
+                  <button
+                    type="button"
+                    onClick={() => setSelectedFileFilter("ALL")}
+                    className="text-[11px] font-medium text-primary hover:underline"
+                  >
+                    Clear
+                  </button>
+                </div>
+              )}
+
+              {/* Finding list */}
+
+              <div className="space-y-3">
+                {filteredIssues.length === 0 ? (
+                  <Card className="p-8 text-center">
+                    <CheckCircle className="mx-auto h-7 w-7 text-success" />
+
+                    <h3 className="mt-3 text-xs font-semibold text-text-primary">
+                      No findings match this filter
+                    </h3>
+
+                    <p className="mt-1 text-[11px] text-muted">
+                      Try a different severity or file filter.
+                    </p>
+                  </Card>
+                ) : (
+                  filteredIssues.map((issue) => {
+                    const isExpanded = expandedIssue === issue._id;
+
+                    const filePath =
+                      issue?.location?.filePath ?? "Project-wide";
+
+                    const line = getIssueLineLabel(issue);
+
+                    return (
+                      <Card
+                        key={issue._id}
+                        className="overflow-hidden border-border-subtle p-0"
                       >
-                        <div className="space-y-1">
-                          <div className="flex flex-wrap items-center gap-2">
-                            <SeverityBadge
-                              severity={formatSeverity(issue.severity)}
-                            />
+                        {/* Header */}
 
-                            <span className="font-mono text-[10px] uppercase text-muted">
-                              {formatCategory(issue.category)}
-                            </span>
+                        <div
+                          role="button"
+                          tabIndex={0}
+                          onClick={() =>
+                            setExpandedIssue(isExpanded ? null : issue._id)
+                          }
+                          className="flex cursor-pointer items-start justify-between gap-3 p-4 hover:bg-surface-hover/50"
+                        >
+                          <div className="space-y-1">
+                            <div className="flex flex-wrap items-center gap-2">
+                              <SeverityBadge
+                                severity={formatSeverity(issue.severity)}
+                              />
 
-                            {typeof issue.confidence === "number" && (
-                              <span className="font-mono text-[10px] text-muted">
-                                {Math.round(issue.confidence * 100)}% confidence
+                              <span className="font-mono text-[10px] uppercase text-muted">
+                                {formatCategory(issue.category)}
                               </span>
+
+                              {typeof issue.confidence === "number" && (
+                                <span className="font-mono text-[10px] text-muted">
+                                  {Math.round(issue.confidence * 100)}%
+                                  confidence
+                                </span>
+                              )}
+                            </div>
+
+                            <h4 className="text-xs font-semibold text-text-primary">
+                              {issue.title}
+                            </h4>
+
+                            <div className="flex items-center gap-1 font-mono text-[11px] text-muted">
+                              <FileCode className="h-3 w-3 shrink-0 text-primary" />
+
+                              <span className="break-all">
+                                {filePath}
+
+                                {line ? `:${line}` : ""}
+                              </span>
+                            </div>
+                          </div>
+
+                          <div className="p-1 text-muted">
+                            {isExpanded ? (
+                              <ChevronDown className="h-4 w-4" />
+                            ) : (
+                              <ChevronRight className="h-4 w-4" />
                             )}
                           </div>
-
-                          <h4 className="text-xs font-semibold text-text-primary">
-                            {issue.title}
-                          </h4>
-
-                          <div className="flex items-center gap-1 font-mono text-[11px] text-muted">
-                            <FileCode className="h-3 w-3 shrink-0 text-primary" />
-
-                            <span className="break-all">
-                              {filePath}
-
-                              {line ? `:${line}` : ""}
-                            </span>
-                          </div>
                         </div>
 
-                        <div className="p-1 text-muted">
-                          {isExpanded ? (
-                            <ChevronDown className="h-4 w-4" />
-                          ) : (
-                            <ChevronRight className="h-4 w-4" />
-                          )}
-                        </div>
-                      </div>
+                        {/* Body */}
 
-                      {/* Body */}
-
-                      {isExpanded && (
-                        <div className="border-t border-border-subtle bg-surface/40 px-4 pb-4 pt-4">
-                          <div className="space-y-4 text-xs">
-                            <div>
-                              <span className="mb-1 block font-mono text-[10px] uppercase text-muted">
-                                Finding
-                              </span>
-
-                              <p className="leading-relaxed text-text-secondary">
-                                {issue.description}
-                              </p>
-                            </div>
-
-                            <div>
-                              <span className="mb-1 block font-mono text-[10px] uppercase text-muted">
-                                Recommended remediation
-                              </span>
-
-                              <p className="leading-relaxed text-text-primary">
-                                {issue.recommendation}
-                              </p>
-                            </div>
-
-                            {issue.ruleId && (
+                        {isExpanded && (
+                          <div className="border-t border-border-subtle bg-surface/40 px-4 pb-4 pt-4">
+                            <div className="space-y-4 text-xs">
                               <div>
                                 <span className="mb-1 block font-mono text-[10px] uppercase text-muted">
-                                  Rule
+                                  Finding
                                 </span>
 
-                                <span className="font-mono text-[11px] text-primary">
-                                  {issue.ruleId}
-                                </span>
+                                <p className="leading-relaxed text-text-secondary">
+                                  {issue.description}
+                                </p>
                               </div>
-                            )}
 
-                            {issue.codeSnippet && (
                               <div>
-                                <div className="mb-1 flex items-center justify-between">
-                                  <span className="font-mono text-[10px] uppercase text-muted">
-                                    Code snippet
+                                <span className="mb-1 block font-mono text-[10px] uppercase text-muted">
+                                  Recommended remediation
+                                </span>
+
+                                <p className="leading-relaxed text-text-primary">
+                                  {issue.recommendation}
+                                </p>
+                              </div>
+
+                              {issue.ruleId && (
+                                <div>
+                                  <span className="mb-1 block font-mono text-[10px] uppercase text-muted">
+                                    Rule
                                   </span>
 
-                                  <button
-                                    type="button"
-                                    onClick={() =>
-                                      handleCopy(issue.codeSnippet)
-                                    }
-                                    className="inline-flex items-center gap-1 text-[10px] text-muted hover:text-primary"
-                                  >
-                                    <Copy className="h-3 w-3" />
-                                    Copy
-                                  </button>
+                                  <span className="font-mono text-[11px] text-primary">
+                                    {issue.ruleId}
+                                  </span>
                                 </div>
+                              )}
 
-                                <pre className="overflow-x-auto rounded-lg border border-border-subtle bg-surface p-3 font-mono text-[11px] text-text-secondary">
-                                  {issue.codeSnippet}
-                                </pre>
-                              </div>
-                            )}
+                              {issue.codeSnippet && (
+                                <div>
+                                  <div className="mb-1 flex items-center justify-between">
+                                    <span className="font-mono text-[10px] uppercase text-muted">
+                                      Code snippet
+                                    </span>
+
+                                    <button
+                                      type="button"
+                                      onClick={() =>
+                                        handleCopy(issue.codeSnippet)
+                                      }
+                                      className="inline-flex items-center gap-1 text-[10px] text-muted hover:text-primary"
+                                    >
+                                      <Copy className="h-3 w-3" />
+                                      Copy
+                                    </button>
+                                  </div>
+
+                                  <pre className="overflow-x-auto rounded-lg border border-border-subtle bg-surface p-3 font-mono text-[11px] text-text-secondary">
+                                    {issue.codeSnippet}
+                                  </pre>
+                                </div>
+                              )}
+                            </div>
                           </div>
-                        </div>
-                      )}
-                    </Card>
-                  );
-                })
-              )}
+                        )}
+                      </Card>
+                    );
+                  })
+                )}
+              </div>
+            </div>
+
+            {/* Severity breakdown */}
+
+            <div className="space-y-6">
+              <Card>
+                <CardHeader
+                  title="Finding Proportions"
+                  subtitle="By severity tier"
+                />
+
+                <DonutChart data={donutData} />
+              </Card>
+
+              <Card className="space-y-3">
+                <CardHeader title="Issue Summary" subtitle="Current review" />
+
+                <IssueCountRow
+                  label="Critical"
+                  value={issueCounts.critical ?? 0}
+                />
+
+                <IssueCountRow label="High" value={issueCounts.high ?? 0} />
+
+                <IssueCountRow label="Medium" value={issueCounts.medium ?? 0} />
+
+                <IssueCountRow label="Low" value={issueCounts.low ?? 0} />
+
+                <IssueCountRow label="Info" value={issueCounts.info ?? 0} />
+              </Card>
             </div>
           </div>
+        )}
 
-          {/* Severity breakdown */}
-
-          <div className="space-y-6">
-            <Card>
-              <CardHeader
-                title="Finding Proportions"
-                subtitle="By severity tier"
-              />
-
-              <DonutChart data={donutData} />
-            </Card>
-
-            <Card className="space-y-3">
-              <CardHeader title="Issue Summary" subtitle="Current review" />
-
-              <IssueCountRow
-                label="Critical"
-                value={issueCounts.critical ?? 0}
-              />
-
-              <IssueCountRow label="High" value={issueCounts.high ?? 0} />
-
-              <IssueCountRow label="Medium" value={issueCounts.medium ?? 0} />
-
-              <IssueCountRow label="Low" value={issueCounts.low ?? 0} />
-
-              <IssueCountRow label="Info" value={issueCounts.info ?? 0} />
-            </Card>
-          </div>
-        </div>
-      )}
-
-      {/* ====================================
+        {/* ====================================
           AFFECTED FILES
       ===================================== */}
 
-      {activeTab === "files" && (
-        <Card className="overflow-hidden border-border-subtle p-0">
-          <div className="border-b border-border-subtle p-4">
-            <h4 className="text-xs font-semibold uppercase tracking-wider text-text-primary">
-              Files With Findings
-            </h4>
+        {activeTab === "files" && (
+          <Card className="overflow-hidden border-border-subtle p-0">
+            <div className="border-b border-border-subtle p-4">
+              <h4 className="text-xs font-semibold uppercase tracking-wider text-text-primary">
+                Files With Findings
+              </h4>
 
-            <p className="mt-1 text-[11px] text-muted">
-              This view contains files referenced by persisted review findings.
-            </p>
-          </div>
-
-          {affectedFiles.length === 0 ? (
-            <div className="p-10 text-center text-xs text-muted">
-              No affected files.
+              <p className="mt-1 text-[11px] text-muted">
+                This view contains files referenced by persisted review
+                findings.
+              </p>
             </div>
-          ) : (
-            <div className="overflow-x-auto">
-              <table className="w-full text-left text-xs">
-                <thead className="border-b border-border-subtle bg-surface font-mono text-[10px] uppercase text-muted">
-                  <tr>
-                    <th className="px-5 py-2.5">File Path</th>
 
-                    <th className="px-3 py-2.5">Findings</th>
+            {affectedFiles.length === 0 ? (
+              <div className="p-10 text-center text-xs text-muted">
+                No affected files.
+              </div>
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="w-full text-left text-xs">
+                  <thead className="border-b border-border-subtle bg-surface font-mono text-[10px] uppercase text-muted">
+                    <tr>
+                      <th className="px-5 py-2.5">File Path</th>
 
-                    <th className="px-3 py-2.5">Critical</th>
+                      <th className="px-3 py-2.5">Findings</th>
 
-                    <th className="px-3 py-2.5">High</th>
+                      <th className="px-3 py-2.5">Critical</th>
 
-                    <th className="px-3 py-2.5">Medium</th>
+                      <th className="px-3 py-2.5">High</th>
 
-                    <th className="px-5 py-2.5 text-right">Action</th>
-                  </tr>
-                </thead>
+                      <th className="px-3 py-2.5">Medium</th>
 
-                <tbody className="divide-y divide-border-subtle">
-                  {affectedFiles.map((file) => (
-                    <tr key={file.path} className="hover:bg-surface-hover/70">
-                      <td className="px-5 py-3 font-mono text-text-primary">
-                        {file.path}
-                      </td>
-
-                      <td className="px-3 py-3 font-mono text-muted">
-                        {file.total}
-                      </td>
-
-                      <td className="px-3 py-3 font-mono text-error">
-                        {file.critical}
-                      </td>
-
-                      <td className="px-3 py-3 font-mono text-warning">
-                        {file.high}
-                      </td>
-
-                      <td className="px-3 py-3 font-mono text-text-secondary">
-                        {file.medium}
-                      </td>
-
-                      <td className="px-5 py-3 text-right">
-                        <Button
-                          size="sm"
-                          variant="ghost"
-                          onClick={() => {
-                            setSelectedFileFilter(file.path);
-
-                            setActiveTab("issues");
-                          }}
-                        >
-                          View Findings
-                        </Button>
-                      </td>
+                      <th className="px-5 py-2.5 text-right">Action</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
-        </Card>
-      )}
+                  </thead>
 
-      {/* ====================================
+                  <tbody className="divide-y divide-border-subtle">
+                    {affectedFiles.map((file) => (
+                      <tr key={file.path} className="hover:bg-surface-hover/70">
+                        <td className="px-5 py-3 font-mono text-text-primary">
+                          {file.path}
+                        </td>
+
+                        <td className="px-3 py-3 font-mono text-muted">
+                          {file.total}
+                        </td>
+
+                        <td className="px-3 py-3 font-mono text-error">
+                          {file.critical}
+                        </td>
+
+                        <td className="px-3 py-3 font-mono text-warning">
+                          {file.high}
+                        </td>
+
+                        <td className="px-3 py-3 font-mono text-text-secondary">
+                          {file.medium}
+                        </td>
+
+                        <td className="px-5 py-3 text-right">
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            onClick={() => {
+                              setSelectedFileFilter(file.path);
+
+                              setActiveTab("issues");
+                            }}
+                          >
+                            View Findings
+                          </Button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </Card>
+        )}
+
+        {/* ====================================
           EXECUTIVE SUMMARY
       ===================================== */}
 
-      {activeTab === "overview" && (
-        <div className="max-w-4xl space-y-4">
-          <Card className="space-y-3">
-            <div className="flex items-center gap-2">
-              <Sparkles className="h-4 w-4 text-primary" />
+        {activeTab === "overview" && (
+          <div className="max-w-4xl space-y-4">
+            <Card className="space-y-3">
+              <div className="flex items-center gap-2">
+                <Sparkles className="h-4 w-4 text-primary" />
 
-              <h3 className="text-xs font-semibold uppercase tracking-wider text-text-primary">
-                Review Summary
-              </h3>
-            </div>
+                <h3 className="text-xs font-semibold uppercase tracking-wider text-text-primary">
+                  Review Summary
+                </h3>
+              </div>
 
-            <p className="text-xs leading-relaxed text-text-secondary">
-              {review.summary || "No review summary is available."}
-            </p>
-          </Card>
+              <p className="text-xs leading-relaxed text-text-secondary">
+                {review.summary || "No review summary is available."}
+              </p>
+            </Card>
 
-          <Card>
-            <CardHeader
-              title="Execution Details"
-              subtitle="AI processing metadata"
-            />
-
-            <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
-              <DetailItem
-                label="Input Tokens"
-                value={
-                  typeof execution?.tokenUsage?.input === "number"
-                    ? String(execution.tokenUsage.input)
-                    : "—"
-                }
+            <Card>
+              <CardHeader
+                title="Execution Details"
+                subtitle="AI processing metadata"
               />
 
-              <DetailItem
-                label="Output Tokens"
-                value={
-                  typeof execution?.tokenUsage?.output === "number"
-                    ? String(execution.tokenUsage.output)
-                    : "—"
-                }
-              />
+              <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <DetailItem
+                  label="Input Tokens"
+                  value={
+                    typeof execution?.tokenUsage?.input === "number"
+                      ? String(execution.tokenUsage.input)
+                      : "—"
+                  }
+                />
 
-              <DetailItem
-                label="Total Tokens"
-                value={
-                  typeof execution?.tokenUsage?.total === "number"
-                    ? String(execution.tokenUsage.total)
-                    : "—"
-                }
-              />
+                <DetailItem
+                  label="Output Tokens"
+                  value={
+                    typeof execution?.tokenUsage?.output === "number"
+                      ? String(execution.tokenUsage.output)
+                      : "—"
+                  }
+                />
 
-              <DetailItem
-                label="Chunks"
-                value={
-                  typeof review?.progress?.totalChunks === "number" &&
-                  review.progress.totalChunks > 0
-                    ? `${review.progress.completedChunks ?? 0} / ${review.progress.totalChunks}`
-                    : "—"
-                }
-              />
+                <DetailItem
+                  label="Total Tokens"
+                  value={
+                    typeof execution?.tokenUsage?.total === "number"
+                      ? String(execution.tokenUsage.total)
+                      : "—"
+                  }
+                />
 
-              <DetailItem
-                label="Reliability Score"
-                value={
-                  typeof scores.reliability === "number"
-                    ? `${scores.reliability}/100`
-                    : "—"
-                }
-              />
-            </div>
-          </Card>
-        </div>
-      )}
-    </div>
+                <DetailItem
+                  label="Chunks"
+                  value={
+                    typeof review?.progress?.totalChunks === "number" &&
+                    review.progress.totalChunks > 0
+                      ? `${review.progress.completedChunks ?? 0} / ${review.progress.totalChunks}`
+                      : "—"
+                  }
+                />
+
+                <DetailItem
+                  label="Reliability Score"
+                  value={
+                    typeof scores.reliability === "number"
+                      ? `${scores.reliability}/100`
+                      : "—"
+                  }
+                />
+              </div>
+            </Card>
+          </div>
+        )}
+      </div>
+    </>
   );
 };
 
