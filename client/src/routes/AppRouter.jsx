@@ -10,16 +10,27 @@ import OnboardingRoute from "./OnboardingRoute";
 import PublicRoute from "./PublicRoute";
 import DashboardRoute from "./DashboardRoute";
 import OnboardingPage from "../pages/onboarding/OnboardingPage";
-import HomePage from "../pages/landing/HomePage";
+import LandingPage from "../pages/landing/LandingPage";
 import { ChevronLeft } from "lucide-react";
 import DashboardPage from "../pages/dashboard/DashboardPage";
+import AppLayout from "../layouts/AppLayout";
+import ProjectsPage from "../pages/projects/ProjectsPage";
+import ProjectDetailsPage from "../pages/projects/ProjectDetailsPage";
+import ReviewsPage from "../pages/reviews/ReviewsPage";
+import ReviewProcessingPage from "../pages/reviews/ReviewProcessingPage";
+import ReviewReportPage from "../pages/reviews/ReviewReportPage";
+import AnalyticsPage from "../pages/analytics/AnalyticsPage";
+import ActivityPage from "../pages/activity/ActivityPage";
+import NotificationsPage from "../pages/notifications/NotificationsPage";
+import SettingsPage from "../pages/settings/SettingsPage";
+import HelpPage from "../pages/help/HelpPage";
 
 const AppRouter = () => {
   return (
     <>
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<HomePage />} />
+          <Route path="/" element={<LandingPage />} />
           <Route path="/v1">
             <Route path="auth">
               <Route element={<PublicRoute />}>
@@ -36,7 +47,6 @@ const AppRouter = () => {
                 <Route path="reset-password" element={<ResetPasswordPage />} />
               </Route>
             </Route>
-            <Route path="appearance" element={<AppearancePage />} />
 
             <Route element={<ProtectedRoute />}>
               <Route path="users" element={<OnboardingRoute />}>
@@ -44,7 +54,32 @@ const AppRouter = () => {
               </Route>
 
               <Route element={<DashboardRoute />}>
-                <Route path="dashboard" element={<DashboardPage />} />
+                <Route element={<AppLayout />}>
+                  <Route path="dashboard" element={<DashboardPage />} />
+
+                  <Route path="projects" element={<ProjectsPage />} />
+                  <Route
+                    path="projects/:projectId"
+                    element={<ProjectDetailsPage />}
+                  />
+
+                  <Route path="reviews" element={<ReviewsPage />} />
+                  <Route
+                    path="projects/:projectId/reviews/:reviewId/processing"
+                    element={<ReviewProcessingPage />}
+                  />
+                  <Route
+                    path="projects/:projectId/reviews/:reviewId"
+                    element={<ReviewReportPage />}
+                  />
+
+                  <Route path="analytics" element={<AnalyticsPage />} />
+                  <Route path="activity" element={<ActivityPage />} />
+                  <Route path="notifications" element={<NotificationsPage />} />
+                  <Route path="appearance" element={<AppearancePage />} />
+                  <Route path="settings" element={<SettingsPage />} />
+                  <Route path="help" element={<HelpPage />} />
+                </Route>
               </Route>
             </Route>
           </Route>

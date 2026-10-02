@@ -5,7 +5,7 @@ import ApiError from "../utils/ApiError.js";
 
 export const completeOnboarding = async (
   userId,
-  { username, avatar, purposes, experienceLevel, referralSource },
+  { username, purposes, experienceLevel, referralSource },
 ) => {
   const user = await User.findById(userId);
 
@@ -24,20 +24,21 @@ export const completeOnboarding = async (
     throw new ApiError(400, "Onboarding is already completed");
   }
 
+  const normalizedUsername = username.trim().toLowerCase();
+
   const existingUsername = await User.findOne({
-    username,
-    _id: { $ne: user._id },
+    username: normalizedUsername,
+
+    _id: {
+      $ne: user._id,
+    },
   });
 
   if (existingUsername) {
     throw new ApiError(409, "Username is already taken");
   }
 
-  user.username = username;
-
-  if (avatar !== undefined) {
-    user.avatar = avatar;
-  }
+  user.username = normalizedUsername;
 
   await UserPreference.findOneAndUpdate(
     {
@@ -47,7 +48,7 @@ export const completeOnboarding = async (
       userId: user._id,
       purposes,
       experienceLevel,
-      referralSource: referralSource,
+      referralSource,
     },
     {
       upsert: true,

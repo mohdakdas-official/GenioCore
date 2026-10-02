@@ -8,7 +8,7 @@ const OnboardingStepReferral = ({ formData, updateFormData }) => {
       {/* Header */}
       <div className="text-center space-y-1">
         <h2 className="text-xl sm:text-2xl font-semibold tracking-tight text-text-primary">
-          How did you hear about NeuAspire?
+          How did you hear about GenioCore?
         </h2>
 
         <p className="text-sm text-text-secondary">

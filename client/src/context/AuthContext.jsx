@@ -13,6 +13,23 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [isAuthLoading, setIsAuthLoading] = useState(true);
 
+  const updateUser = (updatedUser) => {
+    if (!updatedUser) {
+      return;
+    }
+
+    setUser((currentUser) => {
+      if (!currentUser) {
+        return updatedUser;
+      }
+
+      return {
+        ...currentUser,
+        ...updatedUser,
+      };
+    });
+  };
+
   const fetchCurrentUser = async () => {
     const response = await getCurrentUser();
 
@@ -63,7 +80,9 @@ export const AuthProvider = ({ children }) => {
       value={{
         user,
         setUser,
+        updateUser,
         isAuthLoading,
+        logout,
       }}
     >
       {children}

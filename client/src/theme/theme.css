@@ -1,5 +1,5 @@
 /* =========================================================
-   NeuAspire — Design Tokens
+   GenioCore — Design Tokens
    ========================================================= */
 
 :root {
@@ -148,6 +148,15 @@
   --transition-fast: 150ms ease;
   --transition-normal: 200ms ease;
   --transition-slow: 300ms ease;
+
+  /* =======================================================
+     Scrollbar
+     ======================================================= */
+
+  --scrollbar-track: #090d14;
+  --scrollbar-thumb: #293241;
+  --scrollbar-thumb-hover: #3a4658;
+  --scrollbar-thumb-active: #4a586c;
 }
 
 /* =========================================================
@@ -219,6 +228,15 @@
   --shadow-xl: 0 20px 50px rgba(15, 23, 42, 0.12);
 
   --shadow-primary: 0 0 20px rgba(22, 163, 74, 0.15);
+
+  /* =========================================================
+   Scrollbar
+   ========================================================= */
+
+  --scrollbar-track: #f1f5f9;
+  --scrollbar-thumb: #cbd5e1;
+  --scrollbar-thumb-hover: #94a3b8;
+  --scrollbar-thumb-active: #64748b;
 }
 
 /* =========================================================
@@ -263,4 +281,131 @@ body {
 
 :disabled {
   cursor: not-allowed;
+}
+
+/* =========================================================
+   GenioCore — Micro-Interactions & Transitions
+   ========================================================= */
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes progressGlow {
+  0%,
+  100% {
+    opacity: 0.8;
+  }
+  50% {
+    opacity: 1;
+    filter: drop-shadow(0 0 6px var(--primary));
+  }
+}
+
+/* Reusable Utility Classes */
+.animate-fade-in {
+  animation: fadeIn 220ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-scale-in {
+  animation: scaleIn 200ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-slide-right {
+  animation: slideInRight 220ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-glow {
+  animation: progressGlow 2.5s ease-in-out infinite;
+}
+
+/* Smooth Accordion/Collapse helper */
+.collapse-transition {
+  display: grid;
+  transition: grid-template-rows 220ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* =========================================================
+   Global Custom Scrollbar
+   Applies to page, containers, modals, tables, X & Y scroll
+   ========================================================= */
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
+}
+
+/* Chrome, Edge, Safari */
+*::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+/* Scrollbar track */
+*::-webkit-scrollbar-track {
+  background: var(--scrollbar-track);
+}
+
+/* Scrollbar thumb */
+*::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb);
+  border-radius: 999px;
+  border: 2px solid var(--scrollbar-track);
+}
+
+/* Hover */
+*::-webkit-scrollbar-thumb:hover {
+  background: var(--scrollbar-thumb-hover);
+}
+
+/* Active / dragging */
+*::-webkit-scrollbar-thumb:active {
+  background: var(--scrollbar-thumb-active);
+}
+
+/* X + Y scrollbar meeting point */
+*::-webkit-scrollbar-corner {
+  background: var(--scrollbar-track);
+}
+
+/* =========================================================
+   Global Scrolling
+   ========================================================= */
+
+html {
+  scroll-behavior: smooth;
+}
+
+* {
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
 }
